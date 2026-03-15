@@ -6,9 +6,9 @@
 <title>Roboyaan — Software Domain</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-   document.querySelector('.nav-logo').addEventListener('click', ()=>{
-      window.location.href = '/roboyaan';
-   })
+  function redirectToRoboyaan() {
+    window.location.href = '/roboyaan.html';
+  }
 </script>
    <style>
 /* ─────────────────────────────────────────
@@ -450,7 +450,7 @@ footer { position:relative; z-index:1; border-top:1px solid var(--border); paddi
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="nav-logo"><div class="nav-mark">RY</div>ROBOYAAN</div>
+  <div class="nav-logo" onclick="redirectToRoboyaan()" style="cursor:pointer;"><div class="nav-mark">RY</div>ROBOYAAN</div>
   <div class="nav-tabs">
     <a class="nav-tab on" href="#python">Python Basics</a>
     <a class="nav-tab" href="#cv">Computer Vision</a>
