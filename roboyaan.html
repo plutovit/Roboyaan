@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROBOYAAN — Master the Machine</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --bg:       #07030f;
+  --bg2:      #0d0820;
+  --bg3:      #130d2e;
+  --s1:       #1a1035;
+  --s2:       #221540;
+
+  --border:   rgba(255,255,255,0.07);
+  --border-hi:rgba(255,255,255,0.18);
+
+  --t1: #f0eaff;
+  --t2: #a899cc;
+  --t3: #5a4e7a;
+
+  /* track accents */
+  --blue:   #4a9eff;
+  --blue-d: #1a6fd4;
+  --blue-gl:rgba(74,158,255,0.20);
+  --blue-dim:rgba(74,158,255,0.08);
+
+  --green:   #34d399;
+  --green-d: #0f9e6a;
+  --green-gl:rgba(52,211,153,0.20);
+  --green-dim:rgba(52,211,153,0.08);
+
+  --purple:  #c084fc;
+  --purple-d:#8b2fc9;
+  --purple-gl:rgba(192,132,252,0.22);
+  --purple-dim:rgba(192,132,252,0.08);
+
+  --gold:    #fbbf24;
+
+  --fh: 'Nunito', sans-serif;
+  --fb: 'Roboto', sans-serif;
+  --fm: 'Roboto Mono', monospace;
+  --tr: 0.2s cubic-bezier(.4,0,.2,1);
+  --tr-slow: 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--fb);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--purple-d); color: #fff; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--s2); border-radius: 5px; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ═══════════════════════════════════════════
+   BACKGROUND — STAR FIELD + GRID
+═══════════════════════════════════════════ */
+.bg-canvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  overflow: hidden;
+}
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.010) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.010) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
+}
+/* Radial vignette */
+.bg-vignette {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 120% 70% at 50% 0%, transparent 30%, rgba(7,3,15,0.7) 100%);
+}
+/* Ambient glows */
+.glow-orb {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+  filter: blur(120px); opacity: 0.18;
+}
+.glow-orb.blue  { width: 600px; height: 600px; background: var(--blue);   top: -200px; left: -100px; animation: drift-a 18s ease-in-out infinite; }
+.glow-orb.green { width: 500px; height: 500px; background: var(--green);  top: 40%; right: -150px; animation: drift-b 22s ease-in-out infinite; }
+.glow-orb.pur   { width: 700px; height: 700px; background: var(--purple); bottom: -250px; left: 20%; animation: drift-c 26s ease-in-out infinite; }
+@keyframes drift-a { 0%,100%{transform:translate(0,0)} 50%{transform:translate(80px,60px)} }
+@keyframes drift-b { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,80px)} }
+@keyframes drift-c { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-70px)} }
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 60px;
+  background: rgba(7,3,15,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 32px; gap: 8px;
+}
+.nav-logo {
+  font-family: var(--fh); font-weight: 900; font-size: 18px;
+  letter-spacing: 0.5px; color: var(--t1);
+  display: flex; align-items: center; gap: 10px;
+  margin-right: 28px; flex-shrink: 0;
+}
+.nav-mark {
+  width: 30px; height: 30px; border-radius: 7px;
+  background: linear-gradient(135deg, var(--blue-d), var(--purple-d));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh); font-weight: 900; font-size: 12px; color: #fff;
+  box-shadow: 0 0 16px rgba(74,158,255,0.3);
+}
+.nav-links {
+  display: flex; align-items: center; gap: 4px;
+  flex: 1;
+}
+.nav-link {
+  font-family: var(--fh); font-weight: 700; font-size: 13px;
+  color: var(--t3); padding: 6px 13px; border-radius: 6px;
+  white-space: nowrap; transition: var(--tr); cursor: pointer;
+}
+.nav-link:hover { color: var(--t1); background: rgba(255,255,255,0.06); }
+.nav-link.bot   { }
+.nav-link.hand  { }
+.nav-link.soft  { }
+.nav-cta {
+  margin-left: auto; flex-shrink: 0;
+  font-family: var(--fm); font-size: 10px; font-weight: 500;
+  padding: 6px 16px; border-radius: 100px;
+  border: 1px solid rgba(74,158,255,0.4);
+  color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase;
+  transition: var(--tr);
+}
+.nav-cta:hover { background: var(--blue-dim); border-color: var(--blue); }
+#burg {
+  display: none; flex-direction: column; gap: 5px;
+  padding: 4px; flex-shrink: 0; margin-left: 8px; cursor: pointer;
+  background: none; border: none;
+}
+#burg span { display: block; width: 20px; height: 2px; background: var(--t2); border-radius: 2px; transition: var(--tr); }
+#burg.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+#burg.open span:nth-child(2) { opacity: 0; }
+#burg.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+#mob-nav {
+  display: none; position: fixed; top: 60px; left: 0; right: 0; z-index: 999;
+  background: rgba(7,3,15,0.97); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border); padding: 14px;
+  flex-direction: column; gap: 4px;
+}
+#mob-nav.open { display: flex; }
+#mob-nav .nav-link { font-size: 15px; padding: 12px 14px; color: var(--t2); }
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 100px 24px 60px;
+}
+.hero-eyebrow {
+  font-family: var(--fm); font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--t3);
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  padding: 6px 18px; border-radius: 100px;
+  margin-bottom: 32px;
+  animation: rise 0.6s ease both;
+}
+.hero-wordmark {
+  font-family: var(--fh); font-weight: 900;
+  font-size: clamp(64px, 12vw, 140px);
+  line-height: 0.88; letter-spacing: -4px;
+  background: linear-gradient(160deg, #ffffff 30%, #d8c8ff 70%, #b89aee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 40px rgba(168,85,247,0.35)) drop-shadow(0 0 80px rgba(168,85,247,0.15));
+  margin-bottom: 6px;
+  animation: rise 0.6s 0.07s ease both;
+}
+.hero-wordmark .r,
+.hero-wordmark .o1,
+.hero-wordmark .b,
+.hero-wordmark .o2,
+.hero-wordmark .y,
+.hero-wordmark .an { color: inherit; text-shadow: none; }
+.hero-tagline {
+  font-family: var(--fh); font-weight: 400;
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(--t3); letter-spacing: 5px; text-transform: uppercase;
+  margin-bottom: 32px;
+  animation: rise 0.6s 0.12s ease both;
+}
+.hero-desc {
+  max-width: 520px; color: var(--t2); font-size: 16px; line-height: 1.8;
+  margin: 0 auto 52px;
+  animation: rise 0.6s 0.17s ease both;
+}
+.hero-stats {
+  display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 52px;
+  animation: rise 0.6s 0.22s ease both;
+}
+.hero-stat {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.hero-stat-num {
+  font-family: var(--fh); font-weight: 900; font-size: 28px;
+  color: var(--t1); letter-spacing: -1px; line-height: 1;
+}
+.hero-stat-label {
+  font-family: var(--fm); font-size: 10px; color: var(--t3);
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.hero-stat-num .c-blue   { color: var(--blue); }
+.hero-stat-num .c-green  { color: var(--green); }
+.hero-stat-num .c-purple { color: var(--purple); }
+.hero-scroll {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--t3); font-family: var(--fm); font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  animation: rise 1s 0.8s ease both;
+}
+.hero-scroll-line {
+  width: 1px; height: 36px;
+  background: linear-gradient(var(--t3), transparent);
+  animation: drop 2.2s ease-in-out infinite;
+}
+@keyframes rise { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+@keyframes drop { 0%,100%{opacity:0;transform:scaleY(.3)} 50%{opacity:.6;transform:scaleY(1)} }
+
+/* ═══════════════════════════════════════════
+   TRACK CARDS — MAIN SECTION
+═══════════════════════════════════════════ */
+#tracks {
+  position: relative; z-index: 1;
+  padding: 80px 0 100px;
+}
+.section-head {
+  text-align: center; margin-bottom: 56px;
+  padding: 0 24px;
+}
+.section-ey {
+  font-family: var(--fm); font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--t3);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.section-ey::before, .section-ey::after {
+  content: ''; width: 40px; height: 1px; background: var(--border-hi);
+}
+.section-title {
+  font-family: var(--fh); font-weight: 900;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: -1.5px; color: var(--t1);
+  margin-bottom: 14px; line-height: 1.1;
+}
+.section-sub {
+  color: var(--t2); font-size: 15px; max-width: 480px; margin: 0 auto;
+  line-height: 1.7;
+}
+.tracks-wrap {
+  max-width: 1140px; margin: 0 auto; padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Individual track card */
+.track-card {
+  position: relative;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform var(--tr-slow), border-color var(--tr-slow), box-shadow var(--tr-slow);
+  cursor: pointer;
+  display: flex; flex-direction: column;
+}
+.track-card:hover {
+  transform: translateY(-8px);
+}
+.track-card.blue:hover  { border-color: rgba(74,158,255,0.5);   box-shadow: 0 24px 60px rgba(74,158,255,0.15); }
+.track-card.green:hover { border-color: rgba(52,211,153,0.5);   box-shadow: 0 24px 60px rgba(52,211,153,0.15); }
+.track-card.purple:hover{ border-color: rgba(192,132,252,0.5);  box-shadow: 0 24px 60px rgba(192,132,252,0.15); }
+
+/* Card top accent line */
+.track-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  transition: opacity var(--tr);
+}
+.track-card.blue::before   { background: linear-gradient(90deg, var(--blue-d), var(--blue)); }
+.track-card.green::before  { background: linear-gradient(90deg, var(--green-d), var(--green)); }
+.track-card.purple::before { background: linear-gradient(90deg, var(--purple-d), var(--purple)); }
+
+/* Card illustration area */
+.track-visual {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+}
+.track-visual svg {
+  width: 100%; height: 100%;
+  position: absolute; inset: 0;
+}
+.track-num {
+  position: absolute; top: 14px; left: 16px;
+  font-family: var(--fm); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 100px; border: 1px solid;
+}
+.track-card.blue   .track-num { color: var(--blue);   border-color: rgba(74,158,255,0.35);   background: var(--blue-dim); }
+.track-card.green  .track-num { color: var(--green);  border-color: rgba(52,211,153,0.35);   background: var(--green-dim); }
+.track-card.purple .track-num { color: var(--purple); border-color: rgba(192,132,252,0.35);  background: var(--purple-dim); }
+
+/* Card body */
+.track-body {
+  padding: 24px 26px 28px;
+  flex: 1; display: flex; flex-direction: column;
+}
+.track-label {
+  font-family: var(--fm); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px;
+}
+.track-card.blue   .track-label { color: var(--blue); }
+.track-card.green  .track-label { color: var(--green); }
+.track-card.purple .track-label { color: var(--purple); }
+.track-title {
+  font-family: var(--fh); font-weight: 900;
+  font-size: 22px; letter-spacing: -0.5px;
+  color: var(--t1); line-height: 1.2; margin-bottom: 12px;
+}
+.track-desc {
+  font-size: 13.5px; color: var(--t2); line-height: 1.75;
+  margin-bottom: 20px; flex: 1;
+}
+.track-modules {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px;
+}
+.track-mod {
+  font-family: var(--fm); font-size: 10px; padding: 3px 9px;
+  border-radius: 4px; border: 1px solid var(--border); color: var(--t3);
+}
+.track-card.blue   .track-mod.hi { border-color: rgba(74,158,255,0.3);  color: var(--blue);   background: var(--blue-dim); }
+.track-card.green  .track-mod.hi { border-color: rgba(52,211,153,0.3);  color: var(--green);  background: var(--green-dim); }
+.track-card.purple .track-mod.hi { border-color: rgba(192,132,252,0.3); color: var(--purple); background: var(--purple-dim); }
+.track-cta {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-radius: 10px;
+  font-family: var(--fh); font-weight: 700; font-size: 13px;
+  transition: var(--tr); margin-top: auto;
+}
+.track-card.blue   .track-cta { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(74,158,255,0.25); }
+.track-card.green  .track-cta { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(52,211,153,0.25); }
+.track-card.purple .track-cta { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(192,132,252,0.25); }
+.track-card.blue:hover   .track-cta { background: rgba(74,158,255,0.18);  border-color: rgba(74,158,255,0.5); }
+.track-card.green:hover  .track-cta { background: rgba(52,211,153,0.18);  border-color: rgba(52,211,153,0.5); }
+.track-card.purple:hover .track-cta { background: rgba(192,132,252,0.18); border-color: rgba(192,132,252,0.5); }
+.track-cta-arrow { font-size: 18px; transition: transform var(--tr); }
+.track-card:hover .track-cta-arrow { transform: translateX(4px); }
+
+/* ═══════════════════════════════════════════
+   FEATURE STRIP
+═══════════════════════════════════════════ */
+#features {
+  position: relative; z-index: 1;
+  padding: 60px 0 80px;
+  border-top: 1px solid var(--border);
+}
+.features-wrap {
+  max-width: 1140px; margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+.feature {
+  background: var(--bg2);
+  padding: 28px 24px 30px;
+  transition: background var(--tr);
+}
+.feature:hover { background: var(--bg3); }
+.feature-icon {
+  font-size: 26px; margin-bottom: 14px; line-height: 1;
+}
+.feature-title {
+  font-family: var(--fh); font-weight: 800; font-size: 15px;
+  color: var(--t1); margin-bottom: 7px;
+}
+.feature-desc {
+  font-size: 13px; color: var(--t3); line-height: 1.65;
+}
+
+/* ═══════════════════════════════════════════
+   COMPETITION RULES STRIP
+═══════════════════════════════════════════ */
+#competition {
+  position: relative; z-index: 1;
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+}
+.comp-wrap {
+  max-width: 1140px; margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 48px; align-items: center;
+}
+.comp-left {}
+.comp-ey {
+  font-family: var(--fm); font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--gold);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.comp-ey::before { content: ''; width: 14px; height: 2px; background: var(--gold); border-radius: 2px; }
+.comp-title {
+  font-family: var(--fh); font-weight: 900;
+  font-size: clamp(26px, 3.5vw, 40px);
+  letter-spacing: -1.5px; color: var(--t1);
+  line-height: 1.1; margin-bottom: 18px;
+}
+.comp-title span { color: var(--gold); }
+.comp-desc {
+  color: var(--t2); font-size: 15px; line-height: 1.8;
+  margin-bottom: 28px;
+}
+.comp-tracks {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.comp-track-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg2);
+  transition: border-color var(--tr), background var(--tr);
+  text-decoration: none; color: inherit;
+}
+.comp-track-row:hover { border-color: var(--border-hi); background: var(--bg3); }
+.comp-track-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.comp-track-row.blue   .comp-track-dot { background: var(--blue); box-shadow: 0 0 8px var(--blue-gl); }
+.comp-track-row.green  .comp-track-dot { background: var(--green); box-shadow: 0 0 8px var(--green-gl); }
+.comp-track-row.purple .comp-track-dot { background: var(--purple); box-shadow: 0 0 8px var(--purple-gl); }
+.comp-track-name {
+  font-family: var(--fh); font-weight: 700; font-size: 14px; color: var(--t1); flex: 1;
+}
+.comp-track-tag {
+  font-family: var(--fm); font-size: 10px; color: var(--t3); letter-spacing: 0.06em;
+}
+
+/* Right side — stats grid */
+.comp-right {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.comp-stat {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 22px 20px;
+  display: flex; flex-direction: column; gap: 5px;
+  transition: border-color var(--tr);
+}
+.comp-stat:hover { border-color: var(--border-hi); }
+.comp-stat-num {
+  font-family: var(--fh); font-weight: 900; font-size: 34px;
+  letter-spacing: -1.5px; line-height: 1;
+}
+.comp-stat-num.c-blue   { color: var(--blue); }
+.comp-stat-num.c-green  { color: var(--green); }
+.comp-stat-num.c-purple { color: var(--purple); }
+.comp-stat-num.c-gold   { color: var(--gold); }
+.comp-stat-label {
+  font-family: var(--fm); font-size: 10px; color: var(--t3);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.comp-stat-sub {
+  font-size: 12px; color: var(--t3); line-height: 1.5; margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   QUICK-ACCESS — TOPIC LINKS
+═══════════════════════════════════════════ */
+#topics {
+  position: relative; z-index: 1;
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+}
+.topics-wrap {
+  max-width: 1140px; margin: 0 auto; padding: 0 24px;
+}
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-top: 40px;
+}
+.topic-group {}
+.topic-group-head {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.topic-group-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.tg-blue   .topic-group-dot { background: var(--blue);   box-shadow: 0 0 8px var(--blue-gl); }
+.tg-green  .topic-group-dot { background: var(--green);  box-shadow: 0 0 8px var(--green-gl); }
+.tg-purple .topic-group-dot { background: var(--purple); box-shadow: 0 0 8px var(--purple-gl); }
+.topic-group-title {
+  font-family: var(--fh); font-weight: 800; font-size: 14px; color: var(--t1);
+}
+.topic-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 13px; color: var(--t2); transition: color var(--tr);
+  text-decoration: none;
+}
+.topic-link:last-child { border-bottom: none; }
+.topic-link:hover { color: var(--t1); }
+.tg-blue   .topic-link:hover { color: var(--blue); }
+.tg-green  .topic-link:hover { color: var(--green); }
+.tg-purple .topic-link:hover { color: var(--purple); }
+.topic-link::before {
+  content: '›'; font-size: 16px; color: var(--t3); flex-shrink: 0;
+  transition: transform var(--tr), color var(--tr);
+}
+.topic-link:hover::before { transform: translateX(3px); }
+.tg-blue   .topic-link:hover::before { color: var(--blue); }
+.tg-green  .topic-link:hover::before { color: var(--green); }
+.tg-purple .topic-link:hover::before { color: var(--purple); }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 40px 32px 32px;
+}
+.footer-wrap {
+  max-width: 1140px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 28px;
+}
+.footer-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 28px;
+}
+.footer-brand {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.footer-wordmark {
+  font-family: var(--fh); font-weight: 900; font-size: 22px;
+  letter-spacing: 0.5px;
+}
+.footer-wordmark .r  { color: var(--blue); }
+.footer-wordmark .b  { color: var(--purple); }
+.footer-wordmark .y  { color: var(--green); }
+.footer-tagline {
+  font-family: var(--fm); font-size: 11px; color: var(--t3);
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.footer-links-group {
+  display: flex; gap: 40px; flex-wrap: wrap;
+}
+.footer-col { display: flex; flex-direction: column; gap: 8px; }
+.footer-col-title {
+  font-family: var(--fm); font-size: 10px; color: var(--t3);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px;
+}
+.footer-col a {
+  font-size: 13px; color: var(--t3); transition: color var(--tr);
+}
+.footer-col a:hover { color: var(--t1); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+  padding-top: 20px; border-top: 1px solid var(--border);
+}
+.footer-copy {
+  font-family: var(--fm); font-size: 10px; color: var(--t3);
+  letter-spacing: 0.06em;
+}
+.footer-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.footer-badge {
+  font-family: var(--fm); font-size: 9px; padding: 3px 9px;
+  border-radius: 100px; border: 1px solid var(--border); color: var(--t3);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+.wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+.divider { height: 1px; background: var(--border); position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 1000px) {
+  .tracks-wrap { grid-template-columns: 1fr 1fr; }
+  .features-wrap { grid-template-columns: 1fr 1fr; }
+  .comp-wrap { grid-template-columns: 1fr; }
+  .topics-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 660px) {
+  .tracks-wrap { grid-template-columns: 1fr; }
+  .topics-grid { grid-template-columns: 1fr; }
+  .features-wrap { grid-template-columns: 1fr 1fr; }
+  .comp-right { grid-template-columns: 1fr 1fr; }
+  .hero-stats { gap: 24px; }
+  #nav { padding: 0 18px; }
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  #burg { display: flex; }
+  .footer-top { flex-direction: column; }
+}
+@media (max-width: 400px) {
+  .hero-wordmark { letter-spacing: -2px; }
+  .features-wrap { grid-template-columns: 1fr; }
+  .comp-right { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND LAYERS -->
+<div class="bg-grid"></div>
+<div class="bg-vignette"></div>
+<div class="glow-orb blue"></div>
+<div class="glow-orb green"></div>
+<div class="glow-orb pur"></div>
+
+<!-- ═══════════════════════════════════════
+     NAV
+════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="nav-logo">
+    <div class="nav-mark">RY</div>
+    ROBOYAAN
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#tracks">Tracks</a>
+    <a class="nav-link" href="#features">Features</a>
+    <a class="nav-link" href="#competition">Competition</a>
+    <a class="nav-link" href="#topics">Topics</a>
+  </div>
+  <a class="nav-cta" href="#tracks">Get Started</a>
+  <button id="burg" aria-label="menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mob-nav">
+  <a class="nav-link" href="#tracks">Tracks</a>
+  <a class="nav-link" href="#features">Features</a>
+  <a class="nav-link" href="#competition">Competition</a>
+  <a class="nav-link" href="#topics">Topics</a>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-eyebrow">Roboyaan Competition 2025 &nbsp;·&nbsp; Study Hub</div>
+
+  <div class="hero-wordmark">ROBOYAAN</div>
+  <div class="hero-tagline">Master the Machine. Understand the Science.</div>
+
+  <p class="hero-desc">
+    Three complete study tracks — from robot kinematics to computer vision to control theory — with live calculators, code examples, and curated resources.
+  </p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span class="c-blue">3</span></div>
+      <div class="hero-stat-label">Tracks</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span class="c-green">12</span></div>
+      <div class="hero-stat-label">Modules</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span class="c-purple">30+</span></div>
+      <div class="hero-stat-label">Topics</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" style="color:var(--gold)">∞</div>
+      <div class="hero-stat-label">Calculators</div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TRACK CARDS
+════════════════════════════════════════ -->
+<section id="tracks">
+  <div class="section-head">
+    <div class="section-ey">Choose Your Track</div>
+    <div class="section-title">Three Domains. One Competition.</div>
+    <p class="section-sub">Pick the track that matches your interest or study all three — every domain is self-contained with everything you need.</p>
+  </div>
+
+  <div class="tracks-wrap">
+
+    <!-- SELF-BALANCING BOT -->
+    <div class="track-card blue" onclick="window.location.href='/self-balancing-bot'">
+      <div class="track-visual">
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Grid -->
+          <defs>
+            <pattern id="g1" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(74,158,255,0.08)" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="200" fill="url(#g1)"/>
+          <!-- Ground line -->
+          <line x1="40" y1="160" x2="360" y2="160" stroke="rgba(74,158,255,0.25)" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <!-- Bot body -->
+          <rect x="175" y="80" width="50" height="70" rx="5" fill="rgba(74,158,255,0.1)" stroke="rgba(74,158,255,0.5)" stroke-width="1.5"/>
+          <!-- Wheels -->
+          <circle cx="183" cy="158" r="12" fill="none" stroke="rgba(74,158,255,0.6)" stroke-width="2"/>
+          <circle cx="183" cy="158" r="4" fill="rgba(74,158,255,0.4)"/>
+          <circle cx="217" cy="158" r="12" fill="none" stroke="rgba(74,158,255,0.6)" stroke-width="2"/>
+          <circle cx="217" cy="158" r="4" fill="rgba(74,158,255,0.4)"/>
+          <!-- IMU chip -->
+          <rect x="185" y="95" width="30" height="20" rx="3" fill="rgba(74,158,255,0.2)" stroke="rgba(74,158,255,0.4)" stroke-width="1"/>
+          <text x="200" y="109" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(74,158,255,0.8)">IMU</text>
+          <!-- Tilt indicator -->
+          <line x1="200" y1="80" x2="200" y2="50" stroke="rgba(74,158,255,0.4)" stroke-width="1" stroke-dasharray="3 3"/>
+          <polygon points="200,44 196,54 204,54" fill="rgba(74,158,255,0.5)"/>
+          <!-- PID arc -->
+          <path d="M 120 160 Q 160 100 200 80" fill="none" stroke="rgba(74,158,255,0.2)" stroke-width="1" stroke-dasharray="5 3"/>
+          <path d="M 280 160 Q 240 100 200 80" fill="none" stroke="rgba(74,158,255,0.2)" stroke-width="1" stroke-dasharray="5 3"/>
+          <!-- Labels -->
+          <text x="90" y="170" font-family="monospace" font-size="9" fill="rgba(74,158,255,0.45)">θ = 0°</text>
+          <text x="290" y="150" font-family="monospace" font-size="9" fill="rgba(74,158,255,0.45)">PID</text>
+          <!-- Signal wave -->
+          <path d="M 50 130 Q 60 115 70 130 Q 80 145 90 130 Q 100 115 110 130" fill="none" stroke="rgba(74,158,255,0.35)" stroke-width="1.5"/>
+        </svg>
+        <div class="track-num">Track 01</div>
+      </div>
+      <div class="track-body">
+        <div class="track-label">Self-Balancing Bot</div>
+        <div class="track-title">Physics, Sensors &amp; Control Theory</div>
+        <div class="track-desc">Master the inverted pendulum problem. Learn IMU sensor fusion, complementary filters, PID controllers, and PWM motor control from first principles.</div>
+        <div class="track-modules">
+          <span class="track-mod hi">Inverted Pendulum</span>
+          <span class="track-mod hi">IMU Fusion</span>
+          <span class="track-mod hi">PID Controller</span>
+          <span class="track-mod hi">PWM &amp; Motors</span>
+          <span class="track-mod">Calculators</span>
+          <span class="track-mod">Code</span>
+        </div>
+        <div class="track-cta">
+          <span>Open Track</span>
+          <span class="track-cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROBOTIC HAND -->
+    <div class="track-card purple" onclick="window.location.href='/robotic-hand'">
+      <div class="track-visual">
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="g2" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(192,132,252,0.08)" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="200" fill="url(#g2)"/>
+          <!-- Workspace arc -->
+          <path d="M 80 160 A 120 120 0 0 1 320 160" fill="none" stroke="rgba(192,132,252,0.12)" stroke-width="1" stroke-dasharray="4 4"/>
+          <!-- Arm links -->
+          <!-- Base -->
+          <circle cx="200" cy="160" r="10" fill="rgba(192,132,252,0.15)" stroke="rgba(192,132,252,0.6)" stroke-width="2"/>
+          <!-- Link 1 -->
+          <line x1="200" y1="160" x2="260" y2="100" stroke="rgba(192,132,252,0.7)" stroke-width="5" stroke-linecap="round"/>
+          <!-- Joint 1 -->
+          <circle cx="260" cy="100" r="7" fill="rgba(30,16,64,1)" stroke="rgba(192,132,252,0.9)" stroke-width="2"/>
+          <!-- Link 2 -->
+          <line x1="260" y1="100" x2="310" y2="130" stroke="rgba(192,132,252,0.5)" stroke-width="4" stroke-linecap="round"/>
+          <!-- End effector -->
+          <circle cx="310" cy="130" r="9" fill="rgba(192,132,252,0.25)" stroke="rgba(192,132,252,0.9)" stroke-width="2"/>
+          <!-- End effector target -->
+          <circle cx="310" cy="130" r="16" fill="none" stroke="rgba(192,132,252,0.3)" stroke-width="1" stroke-dasharray="3 3"/>
+          <!-- DH frame markers -->
+          <line x1="200" y1="160" x2="230" y2="160" stroke="rgba(192,132,252,0.3)" stroke-width="1"/>
+          <line x1="200" y1="160" x2="200" y2="130" stroke="rgba(192,132,252,0.3)" stroke-width="1"/>
+          <text x="235" y="163" font-family="monospace" font-size="8" fill="rgba(192,132,252,0.5)">x</text>
+          <text x="203" y="128" font-family="monospace" font-size="8" fill="rgba(192,132,252,0.5)">y</text>
+          <!-- Angle arc θ1 -->
+          <path d="M 220 160 A 20 20 0 0 0 213 142" fill="none" stroke="rgba(192,132,252,0.4)" stroke-width="1.2"/>
+          <text x="222" y="145" font-family="monospace" font-size="8" fill="rgba(192,132,252,0.6)">θ₁</text>
+          <!-- Angle arc θ2 -->
+          <path d="M 277 101 A 17 17 0 0 0 268 116" fill="none" stroke="rgba(192,132,252,0.4)" stroke-width="1.2"/>
+          <text x="278" y="113" font-family="monospace" font-size="8" fill="rgba(192,132,252,0.6)">θ₂</text>
+          <!-- Target label -->
+          <text x="295" y="120" font-family="monospace" font-size="8" fill="rgba(192,132,252,0.55)">TCP</text>
+          <!-- FABRIK label -->
+          <text x="60" y="80" font-family="monospace" font-size="9" fill="rgba(192,132,252,0.35)">FABRIK</text>
+          <text x="60" y="92" font-family="monospace" font-size="9" fill="rgba(192,132,252,0.35)">IK solver</text>
+        </svg>
+        <div class="track-num">Track 02</div>
+      </div>
+      <div class="track-body">
+        <div class="track-label">Robotic Hand</div>
+        <div class="track-title">Kinematics, DH Parameters &amp; IK</div>
+        <div class="track-desc">Understand robotic arm structure, Denavit-Hartenberg convention, forward kinematics transformations, and iterative inverse kinematics solving with FABRIK.</div>
+        <div class="track-modules">
+          <span class="track-mod hi">Arm Structure</span>
+          <span class="track-mod hi">DH Parameters</span>
+          <span class="track-mod hi">Forward IK</span>
+          <span class="track-mod hi">FABRIK</span>
+          <span class="track-mod hi">Joint Sync</span>
+          <span class="track-mod">Resources</span>
+        </div>
+        <div class="track-cta">
+          <span>Open Track</span>
+          <span class="track-cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOFTWARE -->
+    <div class="track-card green" onclick="window.location.href='/software'">
+      <div class="track-visual">
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="g3" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(52,211,153,0.08)" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="200" fill="url(#g3)"/>
+          <!-- Camera / image frame -->
+          <rect x="50" y="50" width="140" height="110" rx="4" fill="rgba(52,211,153,0.06)" stroke="rgba(52,211,153,0.3)" stroke-width="1.5"/>
+          <!-- Image content (simplified scene) -->
+          <rect x="65" y="65" width="110" height="80" rx="2" fill="rgba(52,211,153,0.04)" stroke="rgba(52,211,153,0.15)" stroke-width="1"/>
+          <!-- Detection boxes -->
+          <rect x="72" y="72" width="40" height="50" rx="2" fill="none" stroke="rgba(52,211,153,0.7)" stroke-width="1.5"/>
+          <rect x="72" y="68" width="40" height="8" rx="1" fill="rgba(52,211,153,0.2)"/>
+          <text x="73" y="75" font-family="monospace" font-size="6" fill="rgba(52,211,153,0.9)">person 0.94</text>
+          <rect x="120" y="88" width="45" height="35" rx="2" fill="none" stroke="rgba(52,211,153,0.5)" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <rect x="120" y="84" width="45" height="8" rx="1" fill="rgba(52,211,153,0.15)"/>
+          <text x="121" y="91" font-family="monospace" font-size="6" fill="rgba(52,211,153,0.7)">object 0.81</text>
+          <!-- Arrow to right panel -->
+          <path d="M 196 105 L 218 105" stroke="rgba(52,211,153,0.4)" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <defs>
+            <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 Z" fill="rgba(52,211,153,0.5)"/>
+            </marker>
+          </defs>
+          <!-- Output / code panel -->
+          <rect x="220" y="50" width="130" height="110" rx="4" fill="rgba(52,211,153,0.04)" stroke="rgba(52,211,153,0.2)" stroke-width="1"/>
+          <text x="230" y="68" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.6)">import cv2</text>
+          <text x="230" y="80" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.4)">import numpy as np</text>
+          <text x="230" y="92" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.5)">model = YOLO(</text>
+          <text x="230" y="104" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.5)">&nbsp; 'yolov8n.pt')</text>
+          <text x="230" y="116" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.4)">results = model(</text>
+          <text x="230" y="128" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.4)">&nbsp; frame)</text>
+          <rect x="220" y="136" width="130" height="2" fill="rgba(52,211,153,0.15)" rx="1"/>
+          <!-- IoU label -->
+          <text x="228" y="148" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.35)">IoU: 0.73 ✓ mAP</text>
+          <!-- CNN pipeline dots -->
+          <circle cx="65" cy="178" r="4" fill="rgba(52,211,153,0.5)"/>
+          <line x1="69" y1="178" x2="90" y2="178" stroke="rgba(52,211,153,0.25)" stroke-width="1"/>
+          <circle cx="94" cy="178" r="4" fill="rgba(52,211,153,0.35)"/>
+          <line x1="98" y1="178" x2="118" y2="178" stroke="rgba(52,211,153,0.25)" stroke-width="1"/>
+          <circle cx="122" cy="178" r="4" fill="rgba(52,211,153,0.25)"/>
+          <line x1="126" y1="178" x2="146" y2="178" stroke="rgba(52,211,153,0.25)" stroke-width="1"/>
+          <circle cx="150" cy="178" r="4" fill="rgba(52,211,153,0.15)"/>
+          <text x="58" y="192" font-family="monospace" font-size="7" fill="rgba(52,211,153,0.3)">Conv→Pool→FC→Output</text>
+        </svg>
+        <div class="track-num">Track 03</div>
+      </div>
+      <div class="track-body">
+        <div class="track-label">Software Domain</div>
+        <div class="track-title">Computer Vision &amp; Machine Learning</div>
+        <div class="track-desc">Build vision-based robotics systems. Cover Python fundamentals, OpenCV image processing, YOLOv8 object detection, CNN architectures, and ML pipeline design.</div>
+        <div class="track-modules">
+          <span class="track-mod hi">Python + NumPy</span>
+          <span class="track-mod hi">OpenCV</span>
+          <span class="track-mod hi">YOLOv8</span>
+          <span class="track-mod hi">CNNs</span>
+          <span class="track-mod hi">TensorFlow</span>
+          <span class="track-mod">Exercises</span>
+        </div>
+        <div class="track-cta">
+          <span>Open Track</span>
+          <span class="track-cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FEATURES
+════════════════════════════════════════ -->
+<section id="features">
+  <div class="wrap" style="margin-bottom:32px; padding-top:60px;">
+    <div class="section-ey">What's Inside</div>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="features-wrap">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Live Calculators</div>
+        <div class="feature-desc">Interactive tools for every formula — FK/IK solvers, PID simulators, convolution size calculators, IoU checkers, and more. Change inputs, see results instantly.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🧮</div>
+        <div class="feature-title">Worked Mathematics</div>
+        <div class="feature-desc">Every equation is derived from first principles — torque, DH transforms, PID discrete-time form, loss functions. Understand the why, not just the formula.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💻</div>
+        <div class="feature-title">Runnable Code</div>
+        <div class="feature-desc">Python, C++ and Arduino code for every concept — with syntax highlighting, copy buttons, and inline comments. From sensor reads to full control loops.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✅</div>
+        <div class="feature-title">Test Cases</div>
+        <div class="feature-desc">Pass/fail test suites for each algorithm — so you can verify your own implementation handles edge cases, boundary conditions, and judge-evaluated scenarios.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     COMPETITION
+════════════════════════════════════════ -->
+<section id="competition">
+  <div class="comp-wrap">
+
+    <div class="comp-left">
+      <div class="comp-ey">Roboyaan 2025</div>
+      <div class="comp-title">Built for the<br><span>Competition.</span></div>
+      <p class="comp-desc">
+        Every topic, calculator, and code example is mapped directly to what judges evaluate. Study smart — know the rules, understand the science, and be ready to explain every design decision.
+      </p>
+      <div class="comp-tracks">
+        <a class="comp-track-row blue" href="/self-balancing-bot">
+          <div class="comp-track-dot"></div>
+          <span class="comp-track-name">Self-Balancing Bot</span>
+          <span class="comp-track-tag">Track 01 · Physics + Control</span>
+        </a>
+        <a class="comp-track-row purple" href="/robotic-hand">
+          <div class="comp-track-dot"></div>
+          <span class="comp-track-name">Robotic Hand</span>
+          <span class="comp-track-tag">Track 02 · Kinematics + IK</span>
+        </a>
+        <a class="comp-track-row green" href="/software">
+          <div class="comp-track-dot"></div>
+          <span class="comp-track-name">Software Domain</span>
+          <span class="comp-track-tag">Track 03 · CV + ML</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="comp-right">
+      <div class="comp-stat">
+        <div class="comp-stat-num c-blue">4</div>
+        <div class="comp-stat-label">Modules per Track</div>
+        <div class="comp-stat-sub">Physics, Sensors, Control, Actuators — each self-contained</div>
+      </div>
+      <div class="comp-stat">
+        <div class="comp-stat-num c-green">12+</div>
+        <div class="comp-stat-label">Live Calculators</div>
+        <div class="comp-stat-sub">Interactive tools covering every key formula in the syllabus</div>
+      </div>
+      <div class="comp-stat">
+        <div class="comp-stat-num c-purple">30+</div>
+        <div class="comp-stat-label">Topics Covered</div>
+        <div class="comp-stat-sub">From inverted pendulum physics to YOLOv8 inference pipelines</div>
+      </div>
+      <div class="comp-stat">
+        <div class="comp-stat-num c-gold">100%</div>
+        <div class="comp-stat-label">Competition Ready</div>
+        <div class="comp-stat-sub">Content aligned to Roboyaan judging criteria and rule sheets</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TOPIC QUICK-ACCESS
+════════════════════════════════════════ -->
+<section id="topics">
+  <div class="topics-wrap">
+    <div class="section-head" style="text-align:left; margin-bottom:0;">
+      <div class="section-ey" style="justify-content:flex-start;">Quick Access</div>
+      <div class="section-title" style="font-size:clamp(22px,3vw,34px)">Jump to Any Topic</div>
+    </div>
+
+    <div class="topics-grid">
+
+      <!-- SELF-BALANCING BOT -->
+      <div class="topic-group tg-blue">
+        <div class="topic-group-head">
+          <div class="topic-group-dot"></div>
+          <div class="topic-group-title">Self-Balancing Bot</div>
+        </div>
+        <a class="topic-link" href="/self-balancing-bot#physics">Inverted Pendulum Physics</a>
+        <a class="topic-link" href="/self-balancing-bot#physics">Torque &amp; Small-Angle Approximation</a>
+        <a class="topic-link" href="/self-balancing-bot#sensors">MPU-6050 &amp; IMU Setup</a>
+        <a class="topic-link" href="/self-balancing-bot#sensors">Complementary Filter Design</a>
+        <a class="topic-link" href="/self-balancing-bot#control">PID Controller Theory</a>
+        <a class="topic-link" href="/self-balancing-bot#control">PID Tuning &amp; Windup</a>
+        <a class="topic-link" href="/self-balancing-bot#motors">L298N Motor Driver</a>
+        <a class="topic-link" href="/self-balancing-bot#motors">PWM Signal Generation</a>
+        <a class="topic-link" href="/self-balancing-bot#resources">Videos &amp; Articles →</a>
+      </div>
+
+      <!-- ROBOTIC HAND -->
+      <div class="topic-group tg-purple">
+        <div class="topic-group-head">
+          <div class="topic-group-dot"></div>
+          <div class="topic-group-title">Robotic Hand</div>
+        </div>
+        <a class="topic-link" href="/robotic-hand#structure">Arm Anatomy &amp; DOF</a>
+        <a class="topic-link" href="/robotic-hand#structure">Joint Types &amp; Workspace</a>
+        <a class="topic-link" href="/robotic-hand#kinematics">DH Parameters &amp; Frames</a>
+        <a class="topic-link" href="/robotic-hand#kinematics">Forward Kinematics (FK)</a>
+        <a class="topic-link" href="/robotic-hand#ik">Inverse Kinematics (IK)</a>
+        <a class="topic-link" href="/robotic-hand#ik">FABRIK Algorithm</a>
+        <a class="topic-link" href="/robotic-hand#sync">Joint Synchronisation</a>
+        <a class="topic-link" href="/robotic-hand#sync">S-Curve Motion Profiling</a>
+        <a class="topic-link" href="/robotic-hand#resources">Videos &amp; Articles →</a>
+      </div>
+
+      <!-- SOFTWARE -->
+      <div class="topic-group tg-green">
+        <div class="topic-group-head">
+          <div class="topic-group-dot"></div>
+          <div class="topic-group-title">Software Domain</div>
+        </div>
+        <a class="topic-link" href="/software#python">Python Basics &amp; NumPy</a>
+        <a class="topic-link" href="/software#python">Image Arrays &amp; Shapes</a>
+        <a class="topic-link" href="/software#cv">OpenCV Fundamentals</a>
+        <a class="topic-link" href="/software#cv">Colour Spaces &amp; Transforms</a>
+        <a class="topic-link" href="/software#detection">YOLOv8 Object Detection</a>
+        <a class="topic-link" href="/software#detection">IoU &amp; Bounding Boxes</a>
+        <a class="topic-link" href="/software#ml">CNN Architecture</a>
+        <a class="topic-link" href="/software#ml">Dataset Splits &amp; Training</a>
+        <a class="topic-link" href="/software#resources">Videos &amp; Articles →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-wordmark">
+          <span class="r">RO</span><span class="b">BO</span><span class="y">Y</span>AAN
+        </div>
+        <div class="footer-tagline">Master the Machine. Understand the Science.</div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <div class="footer-col-title">Tracks</div>
+          <a href="/self-balancing-bot">Self-Balancing Bot</a>
+          <a href="/robotic-hand">Robotic Hand</a>
+          <a href="/software">Software Domain</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Self-Balancing Bot</div>
+          <a href="/self-balancing-bot#physics">Physics</a>
+          <a href="/self-balancing-bot#sensors">Sensors</a>
+          <a href="/self-balancing-bot#control">Control</a>
+          <a href="/self-balancing-bot#motors">Motors</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Robotic Hand</div>
+          <a href="/robotic-hand#structure">Structure</a>
+          <a href="/robotic-hand#kinematics">Kinematics</a>
+          <a href="/robotic-hand#ik">Inverse IK</a>
+          <a href="/robotic-hand#sync">Sync</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Software</div>
+          <a href="/software#python">Python</a>
+          <a href="/software#cv">Computer Vision</a>
+          <a href="/software#detection">Detection</a>
+          <a href="/software#ml">Machine Learning</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">Roboyaan 2025 &nbsp;·&nbsp; Study Hub &nbsp;·&nbsp; All tracks</div>
+      <div class="footer-badges">
+        <span class="footer-badge">Track 01 · Bot</span>
+        <span class="footer-badge">Track 02 · Hand</span>
+        <span class="footer-badge">Track 03 · Software</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── HAMBURGER ── */
+const burg = document.getElementById('burg');
+const mob  = document.getElementById('mob-nav');
+burg.addEventListener('click', () => {
+  burg.classList.toggle('open');
+  mob.classList.toggle('open');
+});
+mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  burg.classList.remove('open');
+  mob.classList.remove('open');
+}));
+
+/* ── ACTIVE NAV ON SCROLL ── */
+const navLinks = document.querySelectorAll('#nav .nav-link');
+const sections = ['tracks','features','competition','topics'];
+window.addEventListener('scroll', () => {
+  let cur = sections[0];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 100) cur = id;
+  });
+  navLinks.forEach(l => {
+    const active = l.getAttribute('href') === '#' + cur;
+    l.style.color = active ? 'var(--t1)' : '';
+    l.style.background = active ? 'rgba(255,255,255,0.06)' : '';
+  });
+}, { passive: true });
+
+/* ── SCROLL REVEAL ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.track-card, .feature, .comp-stat, .topic-group').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = `opacity 0.5s ease ${i * 0.06}s, transform 0.5s ease ${i * 0.06}s`;
+  obs.observe(el);
+});
+
+/* ── CARD CURSOR GLOW ── */
+document.querySelectorAll('.track-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1);
+    card.style.setProperty('--mx', x + '%');
+    card.style.setProperty('--my', y + '%');
+  });
+});
+</script>
+</body>
+</html>
