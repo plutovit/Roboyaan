@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roboyaan — Software Domain</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   DESIGN TOKENS — Software Domain
+   Theme: Dark background, Emerald green accent
+───────────────────────────────────────── */
+:root {
+  --bg:        #020f09;
+  --bg2:       #041410;
+  --s1:        #071a13;
+  --s2:        #0a2019;
+  --s3:        #0d2820;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(52,211,153,0.28);
+
+  --green:     #34d399;
+  --green-s:   #059669;
+  --green-dim: rgba(52,211,153,0.10);
+  --green-gl:  rgba(52,211,153,0.20);
+
+  --blue:      #60a5fa;
+  --blue-dim:  rgba(96,165,250,0.10);
+  --amber:     #fbbf24;
+  --amber-dim: rgba(251,191,36,0.10);
+  --red:       #f87171;
+  --red-dim:   rgba(248,113,113,0.10);
+  --purple:    #a78bfa;
+
+  --t1:        #ecfdf5;
+  --t2:        #86c7aa;
+  --t3:        #3d7a5e;
+
+  --fh: 'Nunito',      sans-serif;
+  --fb: 'Roboto',      sans-serif;
+  --fm: 'Roboto Mono', monospace;
+
+  --r:   8px;
+  --rl:  14px;
+  --tr:  0.20s cubic-bezier(.4,0,.2,1);
+}
+
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--fb);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background:var(--green); color:#000; }
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--s3); border-radius:5px; }
+img { max-width:100%; display:block; }
+a { color:inherit; text-decoration:none; }
+button { cursor:pointer; border:none; background:none; font:inherit; }
+input, select, textarea { font-family:var(--fb); }
+
+/* ─────────────────────────────────────────
+   BACKGROUND EFFECTS
+───────────────────────────────────────── */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 40% at 30% 20%, rgba(52,211,153,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 80% 70%, rgba(96,165,250,0.03) 0%, transparent 60%);
+}
+body::after {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: radial-gradient(rgba(52,211,153,0.055) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse 100% 80% at 50% 40%, black 30%, transparent 100%);
+}
+
+/* ─────────────────────────────────────────
+   NAV
+───────────────────────────────────────── */
+#nav {
+  position:fixed; top:0; left:0; right:0; z-index:1000;
+  height:56px; display:flex; align-items:center; padding:0 28px; gap:6px;
+  background:rgba(2,15,9,0.90); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo {
+  font-family:var(--fh); font-weight:900; font-size:17px; color:var(--t1);
+  display:flex; align-items:center; gap:10px; margin-right:20px; flex-shrink:0;
+}
+.nav-mark {
+  width:28px; height:28px; background:var(--green-s); border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--fh); font-weight:900; font-size:12px; color:#fff;
+  flex-shrink:0; box-shadow:0 0 14px var(--green-gl);
+}
+.nav-tabs {
+  display:flex; align-items:center; gap:2px; flex:1;
+  overflow-x:auto; scrollbar-width:none;
+}
+.nav-tabs::-webkit-scrollbar { display:none; }
+.nav-tab {
+  font-family:var(--fh); font-weight:700; font-size:13px; color:var(--t3);
+  padding:6px 13px; border-radius:var(--r); white-space:nowrap;
+  transition:var(--tr); cursor:pointer;
+}
+.nav-tab:hover { color:var(--t1); background:rgba(255,255,255,0.05); }
+.nav-tab.on { color:var(--green); background:var(--green-dim); }
+.nav-badge {
+  margin-left:auto; flex-shrink:0;
+  font-family:var(--fm); font-size:10px; font-weight:500; padding:4px 12px;
+  border-radius:100px; background:var(--green-dim);
+  border:1px solid var(--green); color:var(--green);
+  letter-spacing:0.08em; text-transform:uppercase;
+}
+#burg {
+  display:none; flex-direction:column; gap:5px;
+  padding:4px; flex-shrink:0; margin-left:8px;
+}
+#burg span { display:block; width:20px; height:2px; background:var(--t2); border-radius:2px; transition:var(--tr); }
+#burg.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+#burg.open span:nth-child(2) { opacity:0; }
+#burg.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+#mob {
+  display:none; position:fixed; top:56px; left:0; right:0; z-index:999;
+  background:rgba(2,15,9,0.97); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border); padding:12px;
+  flex-direction:column; gap:3px;
+}
+#mob.open { display:flex; }
+#mob .nav-tab { font-size:14px; padding:11px 14px; }
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+.hero {
+  position:relative; z-index:1; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; text-align:center; padding:90px 24px 64px;
+}
+.hero-eyebrow {
+  font-family:var(--fm); font-size:11px; letter-spacing:0.18em;
+  text-transform:uppercase; color:var(--t3);
+  background:var(--s1); border:1px solid var(--border);
+  padding:5px 16px; border-radius:100px; margin-bottom:28px;
+  animation:rise .5s ease both;
+}
+.hero-title {
+  font-family:var(--fh); font-weight:900;
+  font-size:clamp(52px,9vw,100px); line-height:.92;
+  letter-spacing:-2px; color:var(--t1); margin-bottom:8px;
+  animation:rise .5s .06s ease both;
+}
+.hero-title .ac { color:var(--green); text-shadow:0 0 50px var(--green-gl); }
+.hero-title .sm {
+  display:block; font-size:0.38em; letter-spacing:5px; font-weight:600;
+  color:var(--t3); text-transform:uppercase; margin-bottom:6px; text-shadow:none;
+}
+.hero-desc {
+  max-width:520px; color:var(--t2); font-size:15px; line-height:1.8;
+  margin:16px auto 40px; animation:rise .5s .12s ease both;
+}
+.hero-pills {
+  display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+  margin-bottom:44px; animation:rise .5s .18s ease both;
+}
+.hpill {
+  font-family:var(--fm); font-size:11px; padding:4px 13px;
+  border-radius:100px; border:1px solid var(--border); color:var(--t3);
+  letter-spacing:0.03em;
+}
+.hpill.on { border-color:rgba(52,211,153,0.3); color:var(--green); background:var(--green-dim); }
+.hero-caret {
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  color:var(--t3); font-family:var(--fm); font-size:10px;
+  letter-spacing:0.12em; text-transform:uppercase;
+  animation:rise 1s .6s ease both;
+}
+.hero-caret-line {
+  width:1px; height:32px;
+  background:linear-gradient(var(--green), transparent);
+  animation:drop 2s ease-in-out infinite;
+}
+@keyframes rise { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes drop { 0%,100%{opacity:0;transform:scaleY(.3)} 50%{opacity:.6;transform:scaleY(1)} }
+
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+.divider { position:relative; z-index:1; height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); }
+.mod { position:relative; z-index:1; padding:64px 0; border-bottom:1px solid var(--border); }
+.mod:last-child { border-bottom:none; }
+.wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
+.mod-head { margin-bottom:28px; }
+.mod-ey {
+  font-family:var(--fm); font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--t3); margin-bottom:8px; display:flex; align-items:center; gap:8px;
+}
+.mod-ey::before { content:''; display:inline-block; width:14px; height:2px; background:var(--green); border-radius:2px; }
+.mod-title { font-family:var(--fh); font-weight:800; font-size:clamp(20px,3vw,28px); letter-spacing:-.5px; color:var(--t1); }
+
+/* ─────────────────────────────────────────
+   TOPICS
+───────────────────────────────────────── */
+.topics { display:flex; flex-direction:column; gap:12px; }
+.topic { background:var(--s1); border:1px solid var(--border); border-radius:var(--rl); overflow:hidden; transition:border-color var(--tr); }
+.topic:hover { border-color:rgba(52,211,153,0.18); }
+.topic.open { border-color:var(--border-hi); }
+.t-head { display:flex; align-items:center; gap:14px; padding:18px 22px; cursor:pointer; user-select:none; transition:background var(--tr); }
+.t-head:hover { background:rgba(255,255,255,0.02); }
+.t-num {
+  font-family:var(--fm); font-size:10px; font-weight:500; color:#fff;
+  background:var(--green-s); padding:3px 10px; border-radius:4px;
+  flex-shrink:0; letter-spacing:.05em; min-width:38px; text-align:center;
+  transition:background var(--tr);
+}
+.t-text { flex:1; min-width:0; }
+.t-title { font-family:var(--fh); font-weight:700; font-size:16px; color:var(--t1); line-height:1.25; }
+.t-sub { font-size:13px; color:var(--t3); margin-top:3px; }
+.t-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+.tag { font-family:var(--fm); font-size:10px; padding:2px 8px; border-radius:4px; border:1px solid var(--border); color:var(--t3); letter-spacing:.03em; }
+.tag.g { border-color:rgba(52,211,153,.3); color:var(--green); background:var(--green-dim); }
+.tag.b { border-color:rgba(96,165,250,.3); color:var(--blue); background:var(--blue-dim); }
+.tag.a { border-color:rgba(251,191,36,.3); color:var(--amber); background:var(--amber-dim); }
+.tag.p { border-color:rgba(167,139,250,.3); color:var(--purple); background:rgba(167,139,250,0.08); }
+.t-arr { color:var(--t3); font-size:14px; flex-shrink:0; transition:transform var(--tr); }
+.topic.open .t-arr { transform:rotate(180deg); }
+.t-body { display:none; border-top:1px solid var(--border); padding:0 22px 26px; }
+.topic.open .t-body { display:block; }
+.t-inner { padding-top:22px; }
+
+/* ─────────────────────────────────────────
+   CONTENT ATOMS
+───────────────────────────────────────── */
+.prose { color:var(--t2); font-size:15px; line-height:1.8; }
+.prose strong { color:var(--t1); font-weight:600; }
+.prose em { color:var(--green); font-style:normal; font-weight:500; }
+.mt8{margin-top:8px} .mt12{margin-top:12px} .mt16{margin-top:16px} .mt24{margin-top:24px}
+.sec {
+  font-family:var(--fm); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--t3); margin-top:24px; margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+.sec::after { content:''; flex:1; height:1px; background:var(--border); }
+.kpl { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+.kp { display:flex; align-items:flex-start; gap:12px; font-size:14px; color:var(--t2); line-height:1.7; }
+.kpn { width:22px; height:22px; border-radius:50%; border:2px solid var(--green); display:flex; align-items:center; justify-content:center; font-family:var(--fm); font-size:9px; color:var(--green); flex-shrink:0; margin-top:2px; }
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; }
+.card { background:var(--s2); border:1px solid var(--border); border-radius:var(--r); padding:18px; }
+.card-title { font-family:var(--fh); font-weight:700; font-size:14px; margin-bottom:7px; color:var(--t1); }
+.card-body { color:var(--t2); font-size:13px; line-height:1.7; }
+.note { border-radius:var(--r); padding:13px 16px; font-size:14px; line-height:1.75; margin-top:14px; color:var(--t1); }
+.note.g { border-left:3px solid var(--green); background:var(--green-dim); }
+.note.b { border-left:3px solid var(--blue); background:var(--blue-dim); }
+.note.a { border-left:3px solid var(--amber); background:var(--amber-dim); }
+.note.r { border-left:3px solid var(--red); background:var(--red-dim); }
+.note strong { font-weight:600; }
+.fbox { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:18px 22px; text-align:center; margin-top:12px; }
+.formula { font-family:var(--fm); font-size:clamp(12px,2vw,15px); color:var(--green); line-height:2.2; letter-spacing:.04em; }
+.fnote { color:var(--t3); font-size:12px; margin-top:6px; }
+.dtable { width:100%; border-collapse:collapse; font-size:13px; margin-top:14px; border-radius:var(--r); overflow:hidden; }
+.dtable th { background:var(--s2); padding:9px 14px; text-align:left; font-family:var(--fm); font-size:10px; color:var(--green); letter-spacing:.13em; text-transform:uppercase; border-bottom:1px solid var(--border); }
+.dtable td { padding:9px 14px; color:var(--t2); border-bottom:1px solid rgba(255,255,255,.04); }
+.dtable tr:last-child td { border-bottom:none; }
+.dtable tr:nth-child(even) td { background:rgba(255,255,255,.01); }
+.dtable td:first-child { color:var(--t1); font-weight:500; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-family:var(--fm); font-size:10px; }
+.bg { background:var(--green-dim); color:var(--green); }
+.bb { background:var(--blue-dim); color:var(--blue); }
+.ba { background:var(--amber-dim); color:var(--amber); }
+.br { background:var(--red-dim); color:var(--red); }
+.bp { background:rgba(167,139,250,0.08); color:var(--purple); }
+
+/* ─────────────────────────────────────────
+   CODE BLOCKS
+───────────────────────────────────────── */
+.cbox { background:#010c07; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-top:14px; }
+.cbar { background:var(--s2); border-bottom:1px solid var(--border); padding:8px 14px; display:flex; align-items:center; justify-content:space-between; }
+.clang { font-family:var(--fm); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--green); }
+.cpbtn { font-family:var(--fm); font-size:10px; color:var(--t3); padding:3px 10px; border:1px solid var(--border); border-radius:4px; transition:var(--tr); }
+.cpbtn:hover { color:var(--green); border-color:var(--green); background:var(--green-dim); }
+.cpbtn.ok { color:#4ade80; border-color:#4ade80; }
+pre { padding:18px; overflow-x:auto; font-family:var(--fm); font-size:12.5px; line-height:1.8; color:#9ec4ab; tab-size:4; }
+pre .cm { color:#2a5a3a; }
+pre .kw { color:var(--blue); }
+pre .fn { color:var(--green); }
+pre .st { color:#fca5a5; }
+pre .nm { color:var(--amber); }
+pre .tp { color:var(--purple); }
+pre .dk { color:var(--t1); }
+
+/* ─────────────────────────────────────────
+   TEST SUITE
+───────────────────────────────────────── */
+.tests { background:#010c07; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-top:14px; }
+.tests-hd { background:var(--s2); border-bottom:1px solid var(--border); padding:8px 14px; font-family:var(--fm); font-size:10px; color:var(--t3); letter-spacing:.12em; text-transform:uppercase; display:flex; align-items:center; gap:6px; }
+.tests-hd::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); }
+.tc { display:flex; align-items:flex-start; gap:12px; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.04); transition:background var(--tr); }
+.tc:last-child { border-bottom:none; }
+.tc:hover { background:rgba(255,255,255,.01); }
+.tcs { width:18px; height:18px; border-radius:50%; flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; border:1px solid; }
+.tcs.p { background:var(--green-dim); color:var(--green); border-color:var(--green); }
+.tcs.f { background:var(--red-dim); color:var(--red); border-color:var(--red); }
+.tcs.w { background:var(--amber-dim); color:var(--amber); border-color:var(--amber); }
+.tcb { flex:1; }
+.tcn { color:var(--t1); font-weight:500; font-size:13px; margin-bottom:3px; }
+.tcd { color:var(--t3); font-family:var(--fm); font-size:11px; line-height:1.5; }
+.tcr { color:var(--t2); font-family:var(--fm); font-size:11px; margin-top:4px; }
+
+/* ─────────────────────────────────────────
+   INTERACTIVE CALCULATORS / QUIZ BOXES
+───────────────────────────────────────── */
+.calc { background:var(--s2); border:1px solid var(--border-hi); border-radius:var(--rl); padding:22px; margin-top:14px; position:relative; overflow:hidden; }
+.calc::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--green),rgba(52,211,153,.12)); }
+.calc.b::before { background:linear-gradient(90deg,var(--blue),rgba(96,165,250,.12)); }
+.calc.a::before { background:linear-gradient(90deg,var(--amber),rgba(251,191,36,.12)); }
+.calc.p::before { background:linear-gradient(90deg,var(--purple),rgba(167,139,250,.12)); }
+.calc-title { font-family:var(--fh); font-weight:800; font-size:15px; color:var(--t1); margin-bottom:3px; }
+.calc-sub { font-family:var(--fm); font-size:11px; color:var(--t3); margin-bottom:16px; letter-spacing:.03em; }
+.flds { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.flds.c1 { grid-template-columns:1fr; }
+.flds.c3 { grid-template-columns:repeat(3,1fr); }
+.fld { display:flex; flex-direction:column; gap:5px; }
+.fld label { font-family:var(--fm); font-size:10px; color:var(--t3); letter-spacing:.1em; text-transform:uppercase; }
+.fld input[type=number], .fld input[type=text], .fld select {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:8px 11px; color:var(--t1); font-family:var(--fm); font-size:13px;
+  width:100%; outline:none; transition:border-color var(--tr);
+}
+.fld input:focus, .fld select:focus { border-color:var(--green); }
+.fld select { cursor:pointer; }
+.slrow { display:flex; align-items:center; gap:8px; }
+.slrow input[type=range] { flex:1; height:4px; border-radius:4px; accent-color:var(--green); }
+.slv { font-family:var(--fm); font-size:12px; color:var(--green); min-width:46px; text-align:right; font-weight:500; }
+.cbtn { margin-top:14px; background:var(--green-s); color:#fff; font-family:var(--fh); font-weight:700; font-size:13px; padding:9px 22px; border-radius:var(--r); transition:var(--tr); letter-spacing:.02em; }
+.cbtn:hover { background:var(--green); color:#000; transform:translateY(-1px); box-shadow:0 6px 20px var(--green-gl); }
+.cbtn.b { background:#2563eb; }
+.cbtn.b:hover { background:var(--blue); color:#000; }
+.cbtn.a { background:#b45309; }
+.cbtn.a:hover { background:var(--amber); color:#000; }
+.cout { display:none; margin-top:14px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:14px; font-family:var(--fm); font-size:12.5px; color:var(--t3); }
+.cout.show { display:block; }
+.orow { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+.orow:last-of-type { border-bottom:none; }
+.ok_ { font-size:11px; color:var(--t3); letter-spacing:.03em; }
+.ov { color:var(--green); font-weight:500; font-size:14px; }
+.ov.b { color:var(--blue); } .ov.a { color:var(--amber); } .ov.r { color:var(--red); } .ov.p { color:var(--purple); } .ov.w { color:var(--t1); }
+.onote { margin-top:10px; padding:10px; background:var(--green-dim); border-radius:5px; font-size:12px; color:var(--t2); line-height:1.65; }
+.onote.b { background:var(--blue-dim); }
+.onote.a { background:var(--amber-dim); }
+
+/* Quiz specific */
+.quiz-options { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.quiz-opt {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:10px 14px; cursor:pointer; font-size:14px; color:var(--t2);
+  transition:var(--tr); text-align:left; font-family:var(--fb); display:flex; align-items:center; gap:10px;
+}
+.quiz-opt:hover { border-color:var(--green); color:var(--t1); background:var(--green-dim); }
+.quiz-opt.correct { border-color:var(--green); background:var(--green-dim); color:var(--green); }
+.quiz-opt.wrong   { border-color:var(--red);   background:var(--red-dim);   color:var(--red);   }
+.quiz-opt.revealed.correct { border-color:var(--green); background:var(--green-dim); color:var(--green); }
+.quiz-letter { font-family:var(--fm); font-size:11px; width:20px; height:20px; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.quiz-result { margin-top:12px; padding:12px 16px; border-radius:var(--r); font-size:13px; line-height:1.65; display:none; }
+.quiz-result.show { display:block; }
+.quiz-result.ok { background:var(--green-dim); border-left:3px solid var(--green); color:var(--green); }
+.quiz-result.no { background:var(--red-dim);   border-left:3px solid var(--red);   color:var(--red);   }
+
+/* Image matrix visualizer */
+.matrix-grid { display:grid; gap:2px; margin-top:12px; border-radius:var(--r); overflow:hidden; }
+.matrix-cell { aspect-ratio:1; border-radius:1px; display:flex; align-items:center; justify-content:center; font-family:var(--fm); font-size:9px; transition:var(--tr); cursor:default; }
+
+/* Pipeline diagram */
+.pipeline { display:flex; align-items:center; flex-wrap:wrap; gap:0; margin-top:14px; }
+.pipe-step {
+  background:var(--s2); border:1px solid var(--border); border-radius:var(--r);
+  padding:10px 16px; font-family:var(--fh); font-weight:700; font-size:13px;
+  color:var(--t1); text-align:center; min-width:100px; flex:1;
+  transition:var(--tr);
+}
+.pipe-step:hover { border-color:var(--green); color:var(--green); }
+.pipe-step.g { border-color:rgba(52,211,153,.3); color:var(--green); background:var(--green-dim); }
+.pipe-step.b { border-color:rgba(96,165,250,.3); color:var(--blue); background:var(--blue-dim); }
+.pipe-step.a { border-color:rgba(251,191,36,.3); color:var(--amber); background:var(--amber-dim); }
+.pipe-step.p { border-color:rgba(167,139,250,.3); color:var(--purple); background:rgba(167,139,250,0.08); }
+.pipe-arrow { color:var(--t3); font-size:16px; padding:0 6px; flex-shrink:0; }
+.pipe-sub { font-family:var(--fm); font-size:9px; color:var(--t3); margin-top:3px; font-weight:400; }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer { position:relative; z-index:1; border-top:1px solid var(--border); padding:24px 28px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.fb { font-family:var(--fh); font-weight:900; font-size:16px; color:var(--t1); }
+.fb span { color:var(--green); }
+.flinks { display:flex; gap:18px; flex-wrap:wrap; }
+.flinks a { font-size:13px; color:var(--t3); transition:color var(--tr); }
+.flinks a:hover { color:var(--t1); }
+.fcp { font-family:var(--fm); font-size:10px; color:var(--t3); }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media(max-width:900px){ .g3{grid-template-columns:1fr 1fr} .flds.c3{grid-template-columns:1fr 1fr} .pipeline{flex-direction:column;align-items:stretch} .pipe-arrow{transform:rotate(90deg);align-self:center} }
+@media(max-width:640px){ #nav{padding:0 14px} .nav-tabs{display:none} .nav-badge{display:none} #burg{display:flex} .g2,.g3{grid-template-columns:1fr} .flds,.flds.c3{grid-template-columns:1fr} .wrap{padding:0 16px} .t-head{padding:14px 16px} .t-body{padding:0 16px 20px} .t-title{font-size:14px} pre{font-size:11.5px;padding:13px} }
+@media(max-width:400px){ .hero-title{font-size:46px} }
+
+/* ─────────────────────────────────────────
+   RESOURCES SECTION
+───────────────────────────────────────── */
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:700px){.res-grid{grid-template-columns:1fr}}
+.vid-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:border-color var(--tr),box-shadow var(--tr);text-decoration:none;color:inherit;display:block}
+.vid-card:hover{border-color:var(--border-hi);box-shadow:0 4px 24px var(--green-gl)}
+.vid-card:hover .vid-play{transform:translate(-50%,-50%) scale(1.1);background:var(--green-s)}
+.vid-thumb{position:relative;width:100%;padding-top:56.25%;background:#010b16;overflow:hidden}
+.vid-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.82;transition:opacity var(--tr)}
+.vid-card:hover .vid-thumb img{opacity:1}
+.vid-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;transition:transform var(--tr),background var(--tr);backdrop-filter:blur(4px)}
+.vid-play::after{content:'';width:0;height:0;border-style:solid;border-width:9px 0 9px 16px;border-color:transparent transparent transparent #fff;margin-left:3px}
+.vid-yt-badge{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.75);color:#fff;font-family:var(--fm);font-size:9px;letter-spacing:.08em;padding:3px 7px;border-radius:4px;text-transform:uppercase}
+.vid-meta{padding:13px 16px 15px}
+.vid-title{font-family:var(--fh);font-weight:700;font-size:14px;color:var(--t1);line-height:1.4;margin-bottom:4px}
+.vid-ch{font-family:var(--fm);font-size:10px;color:var(--green);letter-spacing:.06em;text-transform:uppercase}
+.vid-desc{font-size:12px;color:var(--t3);margin-top:6px;line-height:1.6}
+.art-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:5px;transition:border-color var(--tr),box-shadow var(--tr);text-decoration:none;color:inherit;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.art-card:hover{border-color:var(--green);box-shadow:0 4px 24px var(--green-gl)}
+.art-src{font-family:var(--fm);font-size:10px;color:var(--green);letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.art-src::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);opacity:.5;flex-shrink:0}
+.art-title{font-family:var(--fh);font-weight:700;font-size:14px;color:var(--t1);line-height:1.4}
+.art-desc{font-size:12px;color:var(--t3);line-height:1.6}
+.art-arrow{font-size:12px;color:var(--green);margin-top:4px;font-family:var(--fm)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo"><div class="nav-mark">RY</div>ROBOYAAN</div>
+  <div class="nav-tabs">
+    <a class="nav-tab on" href="#python">Python Basics</a>
+    <a class="nav-tab" href="#cv">Computer Vision</a>
+    <a class="nav-tab" href="#detection">Detection &amp; Tracking</a>
+    <a class="nav-tab" href="#ml">Machine Learning</a>
+    <a class="nav-tab" href="#resources">Resources</a>
+  </div>
+  <div class="nav-badge">Software Domain</div>
+  <button id="burg" aria-label="menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mob">
+  <a class="nav-tab" href="#python">Python Basics</a>
+  <a class="nav-tab" href="#cv">Computer Vision</a>
+  <a class="nav-tab" href="#detection">Detection &amp; Tracking</a>
+  <a class="nav-tab" href="#ml">Machine Learning</a>
+  <a class="nav-tab" href="#resources">Resources</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Roboyaan Competition 2025 &nbsp;&middot;&nbsp; Software Domain</div>
+  <h1 class="hero-title">
+    <span class="sm">Study Guide</span>
+    SOFTWARE<br><span class="ac">DOMAIN</span>
+  </h1>
+  <p class="hero-desc">Python, Computer Vision, Object Detection, and Machine Learning — every concept explained with interactive exercises, live code sandboxes, and practical test cases.</p>
+  <div class="hero-pills">
+    <span class="hpill on">Python Basics</span>
+    <span class="hpill on">NumPy &amp; Matplotlib</span>
+    <span class="hpill on">OpenCV</span>
+    <span class="hpill on">YOLOv8</span>
+    <span class="hpill on">CNNs</span>
+    <span class="hpill on">TensorFlow / PyTorch</span>
+    <span class="hpill">Interactive Exercises</span>
+    <span class="hpill">Code Examples</span>
+  </div>
+  <div class="hero-caret"><span>scroll</span><div class="hero-caret-line"></div></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     MODULE 1 — PYTHON BASICS
+═══════════════════════════════════════════ -->
+<section class="mod" id="python">
+<div class="wrap">
+  <div class="mod-head">
+    <div class="mod-ey">Module 01 — Python Basics</div>
+    <div class="mod-title">Python, Libraries, Environments and Packages</div>
+  </div>
+  <div class="topics">
+
+    <!-- T1 Python Basics -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">01</span>
+        <div class="t-text">
+          <div class="t-title">Python Basics</div>
+          <div class="t-sub">Variables, functions, loops, conditionals, file handling</div>
+          <div class="t-tags"><span class="tag g">Python</span><span class="tag g">Syntax</span><span class="tag">File I/O</span><span class="tag">Data Types</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">Python is the dominant language for computer vision and machine learning because of its readable syntax, rich library ecosystem and interactive development style. Before using any CV or ML library, the fundamentals must be solid.</p>
+        <div class="sec">Core Language Concepts</div>
+        <div class="kpl">
+          <div class="kp"><div class="kpn">01</div><div><strong>Variables and Data Types:</strong> Python is dynamically typed. Understanding when something is an int, float, string, list, dict or numpy array prevents the majority of beginner bugs in data pipelines.</div></div>
+          <div class="kp"><div class="kpn">02</div><div><strong>Functions:</strong> Encapsulate logic with <code>def</code>. Use arguments and return values to build reusable preprocessing steps, each doing one clear job.</div></div>
+          <div class="kp"><div class="kpn">03</div><div><strong>Loops and Comprehensions:</strong> <code>for</code> loops iterate over image batches, video frames, and dataset files. List comprehensions are faster and more Pythonic than equivalent for-loops for transformations.</div></div>
+          <div class="kp"><div class="kpn">04</div><div><strong>File Handling:</strong> Reading image paths with <code>open()</code>, <code>os.listdir()</code>, and <code>glob</code> is how datasets are loaded. Always use <code>with open(...)</code> to guarantee files are closed even if an error occurs.</div></div>
+        </div>
+
+        <div class="sec">Code — File Handling and os.path</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Python</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="kw">import</span> os
+<span class="kw">from</span> glob <span class="kw">import</span> glob
+
+<span class="cm"># List all .jpg files in a dataset directory</span>
+image_dir  = <span class="st">"dataset/images/"</span>
+image_paths = glob(os.path.<span class="fn">join</span>(image_dir, <span class="st">"*.jpg"</span>))
+
+<span class="fn">print</span>(<span class="st">f"Found {len(image_paths)} images"</span>)
+
+<span class="cm"># Read a text label file safely</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"labels.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    labels = [line.<span class="fn">strip</span>() <span class="kw">for</span> line <span class="kw">in</span> f.<span class="fn">readlines</span>()]
+
+<span class="cm"># Write results to a file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"results.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> path, label <span class="kw">in</span> <span class="fn">zip</span>(image_paths, labels):
+        f.<span class="fn">write</span>(<span class="st">f"{path}: {label}\n"</span>)</pre>
+        </div>
+
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">Python Fundamentals Check</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">List comprehension: squares of 0–4</div><div class="tcd">[x**2 for x in range(5)]</div><div class="tcr">Result: [0, 1, 4, 9, 16]</div></div></div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">File path join on Windows and Linux</div><div class="tcd">os.path.join("data", "images", "cat.jpg")</div><div class="tcr">Result: "data/images/cat.jpg" (Linux) or "data\images\cat.jpg" (Windows) — always use os.path.join</div></div></div>
+          <div class="tc"><div class="tcs w">W</div><div class="tcb"><div class="tcn">Type confusion: image array vs image path</div><div class="tcd">Passing a string path to cv2.resize() instead of an np.ndarray</div><div class="tcr">Raises AttributeError. Always load the image first: img = cv2.imread(path)</div></div></div>
+        </div>
+
+        <!-- Interactive: variable type quiz -->
+        <div class="sec">Quiz — Python Types</div>
+        <div class="calc">
+          <div class="calc-title">What is the type?</div>
+          <div class="calc-sub">Click the correct data type for each expression</div>
+          <div id="quiz-py" style="display:flex;flex-direction:column;gap:18px"></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- T2 NumPy & Matplotlib -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">02</span>
+        <div class="t-text">
+          <div class="t-title">NumPy and Matplotlib</div>
+          <div class="t-sub">Array operations, vectorised math, and visualising data and images</div>
+          <div class="t-tags"><span class="tag g">NumPy</span><span class="tag b">Matplotlib</span><span class="tag">Arrays</span><span class="tag">Visualisation</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">NumPy is the foundation of all scientific Python. Images are NumPy arrays. Every pixel value, every bounding box coordinate, every model prediction is a NumPy array operation at some level. Matplotlib lets you visualise these arrays — essential for debugging pipelines.</p>
+        <div class="g2 mt16">
+          <div class="card"><div class="card-title" style="color:var(--green)">NumPy</div><div class="card-body">N-dimensional array library. Operations are vectorised — running on C under the hood, thousands of times faster than Python loops. Core object is <code>np.ndarray</code>. Images are 3D arrays: (height, width, channels).</div></div>
+          <div class="card"><div class="card-title" style="color:var(--blue)">Matplotlib</div><div class="card-body">Plotting library. <code>plt.imshow()</code> shows images. <code>plt.hist()</code> shows pixel distributions. <code>plt.subplot()</code> compares before/after. Essential for understanding what preprocessing does to your data.</div></div>
+        </div>
+        <div class="fbox">
+          <div class="formula">image.shape = (H, W, C) &nbsp;— Height &times; Width &times; Channels</div>
+          <div class="formula">pixel range: uint8 = [0, 255] &nbsp;&nbsp; float32 = [0.0, 1.0]</div>
+          <div class="fnote">NumPy dtype matters. OpenCV reads uint8. Neural networks expect float32 in [0, 1]. Always normalise before training.</div>
+        </div>
+
+        <div class="sec">Live Calculator — Image Shape Explorer</div>
+        <div class="calc b">
+          <div class="calc-title">Image Array Shape Calculator</div>
+          <div class="calc-sub">Understand the relationship between image dimensions and memory size</div>
+          <div class="flds c3">
+            <div class="fld"><label>Width (px)</label><input type="number" id="sw" value="640" step="10" oninput="calcShape()"></div>
+            <div class="fld"><label>Height (px)</label><input type="number" id="sh" value="480" step="10" oninput="calcShape()"></div>
+            <div class="fld"><label>Channels</label>
+              <select id="sc" onchange="calcShape()">
+                <option value="1">1 — Grayscale</option>
+                <option value="3" selected>3 — RGB / BGR</option>
+                <option value="4">4 — RGBA</option>
+              </select>
+            </div>
+          </div>
+          <div class="cout show" id="shout">
+            <div class="orow"><span class="ok_">NumPy shape tuple</span><span class="ov b" id="sh-shape">—</span></div>
+            <div class="orow"><span class="ok_">Total pixels</span><span class="ov" id="sh-pix">—</span></div>
+            <div class="orow"><span class="ok_">Memory (uint8, uncompressed)</span><span class="ov" id="sh-mem">—</span></div>
+            <div class="orow"><span class="ok_">Memory (float32 — for training)</span><span class="ov a" id="sh-f32">—</span></div>
+            <div class="orow"><span class="ok_">Common resize for models (224&times;224 float32)</span><span class="ov w" id="sh-mdl">—</span></div>
+          </div>
+        </div>
+
+        <div class="sec">Code — NumPy Image Operations</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Python</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> cv2
+
+img = cv2.<span class="fn">imread</span>(<span class="st">"photo.jpg"</span>)  <span class="cm"># shape: (H, W, 3), dtype: uint8</span>
+
+<span class="fn">print</span>(img.shape)   <span class="cm"># e.g. (480, 640, 3)</span>
+<span class="fn">print</span>(img.dtype)   <span class="cm"># uint8</span>
+<span class="fn">print</span>(img.min(), img.max())  <span class="cm"># 0, 255</span>
+
+<span class="cm"># Normalise to [0, 1] for a neural network</span>
+img_float = img.<span class="fn">astype</span>(np.float32) / <span class="nm">255.0</span>
+
+<span class="cm"># Crop a region: rows 100-200, columns 150-350</span>
+crop = img[<span class="nm">100</span>:<span class="nm">200</span>, <span class="nm">150</span>:<span class="nm">350</span>]
+
+<span class="cm"># Extract the red channel (OpenCV stores BGR, not RGB)</span>
+blue_channel  = img[:, :, <span class="nm">0</span>]
+green_channel = img[:, :, <span class="nm">1</span>]
+red_channel   = img[:, :, <span class="nm">2</span>]</pre>
+        </div>
+
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">NumPy Array Tests</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Shape of a 1920&times;1080 colour image</div><div class="tcd">cv2.imread("hd.jpg").shape</div><div class="tcr">Result: (1080, 1920, 3) — note: height first, then width</div></div></div>
+          <div class="tc"><div class="tcs f">F</div><div class="tcb"><div class="tcn">Passing float64 array to a model expecting float32</div><div class="tcd">np.array([...], dtype=np.float64) fed to TensorFlow layer</div><div class="tcr">Raises dtype mismatch error. Always use .astype(np.float32) before inference.</div></div></div>
+          <div class="tc"><div class="tcs w">W</div><div class="tcb"><div class="tcn">OpenCV vs Matplotlib colour order</div><div class="tcd">plt.imshow(cv2.imread("img.jpg")) — image looks blue-shifted</div><div class="tcr">OpenCV uses BGR. Matplotlib expects RGB. Fix: plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- T3 Virtual Environments & pip -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">03</span>
+        <div class="t-text">
+          <div class="t-title">Virtual Environments and pip</div>
+          <div class="t-sub">Isolating dependencies, installing packages, managing projects</div>
+          <div class="t-tags"><span class="tag g">pip</span><span class="tag g">venv</span><span class="tag">Dependencies</span><span class="tag">requirements.txt</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">A virtual environment isolates your project's packages from the system Python, preventing version conflicts between projects. Every serious Python project — especially computer vision work — should use one.</p>
+        <div class="sec">Workflow</div>
+        <div class="pipeline">
+          <div class="pipe-step g">Create venv<div class="pipe-sub">python -m venv env</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step b">Activate<div class="pipe-sub">source env/bin/activate</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step a">Install packages<div class="pipe-sub">pip install opencv-python</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step">Freeze deps<div class="pipe-sub">pip freeze &gt; requirements.txt</div></div>
+        </div>
+        <div class="sec">Code — Setup Commands</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Terminal</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="cm"># Create a virtual environment</span>
+python -m venv roboyaan_env
+
+<span class="cm"># Activate it (Linux/Mac)</span>
+source roboyaan_env/bin/activate
+
+<span class="cm"># Activate it (Windows)</span>
+roboyaan_env\Scripts\activate
+
+<span class="cm"># Install required packages</span>
+pip install opencv-python numpy matplotlib
+pip install ultralytics          <span class="cm"># YOLOv8</span>
+pip install tensorflow            <span class="cm"># or: pip install torch torchvision</span>
+
+<span class="cm"># Save a reproducible list of all installed packages</span>
+pip freeze > requirements.txt
+
+<span class="cm"># Later, recreate the environment from the list</span>
+pip install -r requirements.txt</pre>
+        </div>
+        <div class="note g mt16"><strong>Google Colab:</strong> Colab has no persistent virtual environment across sessions, but packages installed with <code>!pip install</code> persist for the current session. Always put install commands at the top of your notebook.</div>
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">Environment Setup Tests</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Verify correct Python is active inside venv</div><div class="tcd">which python (Linux) or where python (Windows)</div><div class="tcr">Should point to roboyaan_env/bin/python, not /usr/bin/python</div></div></div>
+          <div class="tc"><div class="tcs f">F</div><div class="tcb"><div class="tcn">ImportError after pip install</div><div class="tcd">pip install was run without activating the venv first</div><div class="tcr">Package installed to system Python, not the project env. Activate first, then reinstall.</div></div></div>
+          <div class="tc"><div class="tcs w">W</div><div class="tcb"><div class="tcn">Two projects need different versions of numpy</div><div class="tcd">Project A needs numpy 1.24, Project B needs numpy 2.0</div><div class="tcr">Each project must have its own venv. Never share environments across projects.</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     MODULE 2 — COMPUTER VISION
+═══════════════════════════════════════════ -->
+<section class="mod" id="cv">
+<div class="wrap">
+  <div class="mod-head">
+    <div class="mod-ey">Module 02 — Computer Vision</div>
+    <div class="mod-title">Images as Data — OpenCV Fundamentals</div>
+  </div>
+  <div class="topics">
+
+    <!-- T4 Images as matrices -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">04</span>
+        <div class="t-text">
+          <div class="t-title">Images as Matrices</div>
+          <div class="t-sub">RGB vs Grayscale, pixel values, channels, and how computers see images</div>
+          <div class="t-tags"><span class="tag g">OpenCV</span><span class="tag g">Pixels</span><span class="tag">RGB</span><span class="tag">Grayscale</span><span class="tag">Matrix</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">A computer does not see a picture — it sees a <strong>matrix of numbers</strong>. Each number is a pixel value from 0 (black) to 255 (white) for 8-bit images. A colour image has three such matrices stacked together, one per channel. Understanding this is the gateway to all computer vision.</p>
+        <div class="g2 mt16">
+          <div class="card"><div class="card-title" style="color:var(--green)">Grayscale Image</div><div class="card-body">2D matrix: shape (H, W). Each value 0–255 represents brightness. 0 = black, 255 = white. One channel only. Used in edge detection and where colour is irrelevant. Memory is 1/3 of colour.</div></div>
+          <div class="card"><div class="card-title" style="color:var(--blue)">Colour Image (BGR/RGB)</div><div class="card-body">3D matrix: shape (H, W, 3). Three channels — Blue, Green, Red in OpenCV (BGR). Red, Green, Blue in most other systems (RGB). Mixing up BGR/RGB is the most common beginner mistake.</div></div>
+        </div>
+        <div class="fbox">
+          <div class="formula">RGB pixel: (R, G, B) = (255, 0, 0) &nbsp;&rarr;&nbsp; Pure Red</div>
+          <div class="formula">Grayscale: Y = 0.299R + 0.587G + 0.114B</div>
+          <div class="fnote">Human eyes are most sensitive to green — that is why green has the highest weight in the grayscale formula</div>
+        </div>
+
+        <div class="sec">Interactive — Pixel Matrix Explorer</div>
+        <div class="calc">
+          <div class="calc-title">Image Matrix Visualiser</div>
+          <div class="calc-sub">See how pixel values form an image — hover cells to inspect values</div>
+          <div class="flds">
+            <div class="fld"><label>Image type</label>
+              <select id="mt-type" onchange="buildMatrix()">
+                <option value="gradient">Gradient (grayscale)</option>
+                <option value="checkerboard">Checkerboard (grayscale)</option>
+                <option value="rgb_blocks">RGB colour blocks</option>
+              </select>
+            </div>
+            <div class="fld"><label>Grid size</label>
+              <select id="mt-size" onchange="buildMatrix()">
+                <option value="8">8 &times; 8</option>
+                <option value="16" selected>16 &times; 16</option>
+              </select>
+            </div>
+          </div>
+          <div id="mt-grid" style="margin-top:12px"></div>
+          <div id="mt-hover" style="margin-top:8px;font-family:var(--fm);font-size:11px;color:var(--t3);min-height:18px"></div>
+        </div>
+
+        <div class="sec">Code — Loading and Converting Images</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Python — OpenCV</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="kw">import</span> cv2
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Load in colour (BGR by default)</span>
+img_bgr  = cv2.<span class="fn">imread</span>(<span class="st">"photo.jpg"</span>)
+
+<span class="cm"># Convert to grayscale</span>
+img_gray = cv2.<span class="fn">cvtColor</span>(img_bgr, cv2.COLOR_BGR2GRAY)
+
+<span class="cm"># Convert BGR to RGB (for matplotlib / neural nets)</span>
+img_rgb  = cv2.<span class="fn">cvtColor</span>(img_bgr, cv2.COLOR_BGR2RGB)
+
+<span class="cm"># Read a specific pixel: row=100, col=200</span>
+pixel_bgr = img_bgr[<span class="nm">100</span>, <span class="nm">200</span>]     <span class="cm"># returns [B, G, R]</span>
+pixel_gray = img_gray[<span class="nm">100</span>, <span class="nm">200</span>]   <span class="cm"># returns single int</span>
+
+<span class="fn">print</span>(<span class="st">f"BGR pixel: {pixel_bgr}"</span>)
+<span class="fn">print</span>(<span class="st">f"Gray pixel: {pixel_gray}"</span>)
+<span class="fn">print</span>(<span class="st">f"Image shape: {img_bgr.shape}"</span>)  <span class="cm"># (H, W, 3)</span></pre>
+        </div>
+
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">Image Representation Tests</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Grayscale value of pure white RGB pixel (255,255,255)</div><div class="tcd">Y = 0.299*255 + 0.587*255 + 0.114*255</div><div class="tcr">Result: 255 — pure white stays white after conversion</div></div></div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Grayscale value of pure red pixel (255, 0, 0)</div><div class="tcd">Y = 0.299*255 + 0.587*0 + 0.114*0</div><div class="tcr">Result: ~76 — red maps to a fairly dark gray</div></div></div>
+          <div class="tc"><div class="tcs f">F</div><div class="tcb"><div class="tcn">Indexing image[col, row] instead of image[row, col]</div><div class="tcd">NumPy uses (row, col) = (y, x). Swapping them accesses the wrong pixel.</div><div class="tcr">Always use image[y, x] — row first, column second. Matches matrix notation.</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- T5 Resizing, preprocessing, filtering -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">05</span>
+        <div class="t-text">
+          <div class="t-title">Resizing, Preprocessing and Edge Detection</div>
+          <div class="t-sub">Image resizing, Gaussian blur, Canny edges and image filtering</div>
+          <div class="t-tags"><span class="tag g">OpenCV</span><span class="tag g">Preprocessing</span><span class="tag">Canny</span><span class="tag">Gaussian Blur</span><span class="tag">Resize</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">Before feeding an image to a model, it must be <strong>preprocessed</strong>: resized to the expected input size, normalised to a standard value range, and optionally noise-reduced. Edge detection finds boundaries in an image and is fundamental for shape-based analysis.</p>
+        <div class="sec">Processing Pipeline</div>
+        <div class="pipeline">
+          <div class="pipe-step g">Load<div class="pipe-sub">cv2.imread()</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step b">Resize<div class="pipe-sub">cv2.resize()</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step">Denoise<div class="pipe-sub">GaussianBlur</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step a">Grayscale<div class="pipe-sub">cvtColor BGR2GRAY</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step p">Edges<div class="pipe-sub">Canny</div></div>
+        </div>
+        <div class="sec">Live Calculator — Resize and Memory Impact</div>
+        <div class="calc">
+          <div class="calc-title">Resize Impact Calculator</div>
+          <div class="calc-sub">See how resizing affects memory and what scale factor was applied</div>
+          <div class="flds c3">
+            <div class="fld"><label>Original W (px)</label><input type="number" id="rw" value="1920" step="10" oninput="calcResize()"></div>
+            <div class="fld"><label>Original H (px)</label><input type="number" id="rh" value="1080" step="10" oninput="calcResize()"></div>
+            <div class="fld"><label>Target size</label>
+              <select id="rt" onchange="calcResize()">
+                <option value="224">224&times;224 (MobileNet)</option>
+                <option value="416">416&times;416 (YOLOv5)</option>
+                <option value="640" selected>640&times;640 (YOLOv8)</option>
+                <option value="1280">1280&times;1280 (Large)</option>
+              </select>
+            </div>
+          </div>
+          <div class="cout show" id="rout">
+            <div class="orow"><span class="ok_">Original size</span><span class="ov w" id="r-orig">—</span></div>
+            <div class="orow"><span class="ok_">Scale factor applied</span><span class="ov" id="r-scale">—</span></div>
+            <div class="orow"><span class="ok_">Original memory (uint8, colour)</span><span class="ov a" id="r-memb">—</span></div>
+            <div class="orow"><span class="ok_">After resize (uint8, colour)</span><span class="ov" id="r-mema">—</span></div>
+            <div class="orow"><span class="ok_">Memory reduction</span><span class="ov b" id="r-red">—</span></div>
+          </div>
+        </div>
+        <div class="sec">Code — Preprocessing Pipeline</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Python — OpenCV</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="kw">import</span> cv2
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">preprocess_for_yolo</span>(img_path, target_size=<span class="nm">640</span>):
+    img = cv2.<span class="fn">imread</span>(img_path)
+
+    <span class="cm"># Resize to square (YOLOv8 expects square input)</span>
+    img = cv2.<span class="fn">resize</span>(img, (target_size, target_size))
+
+    <span class="cm"># Convert BGR to RGB</span>
+    img = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2RGB)
+
+    <span class="cm"># Normalise to [0, 1]</span>
+    img = img.<span class="fn">astype</span>(np.float32) / <span class="nm">255.0</span>
+    <span class="kw">return</span> img
+
+<span class="cm"># Canny edge detection</span>
+<span class="kw">def</span> <span class="fn">detect_edges</span>(img_path, low=<span class="nm">50</span>, high=<span class="nm">150</span>):
+    img   = cv2.<span class="fn">imread</span>(img_path)
+    gray  = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2GRAY)
+    blur  = cv2.<span class="fn">GaussianBlur</span>(gray, (<span class="nm">5</span>, <span class="nm">5</span>), <span class="nm">0</span>)  <span class="cm"># reduce noise first</span>
+    edges = cv2.<span class="fn">Canny</span>(blur, low, high)
+    <span class="kw">return</span> edges</pre>
+        </div>
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">Preprocessing Validation</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Shape after resizing 1920&times;1080 to 640&times;640</div><div class="tcd">cv2.resize(img, (640, 640)).shape</div><div class="tcr">Result: (640, 640, 3) — note: cv2.resize takes (width, height), but shape returns (height, width, channels)</div></div></div>
+          <div class="tc"><div class="tcs w">W</div><div class="tcb"><div class="tcn">Canny on a noisy image without Gaussian blur first</div><div class="tcd">Every noise spike registers as an edge — output is unusable</div><div class="tcr">Always blur before Canny. Kernel size 5&times;5 is a safe default for most images.</div></div></div>
+          <div class="tc"><div class="tcs f">F</div><div class="tcb"><div class="tcn">cv2.resize takes (width, height) but numpy shape is (height, width)</div><div class="tcd">cv2.resize(img, (img.shape[0], img.shape[1])) — argument order swapped</div><div class="tcr">Transposes the image. Always pass (width, height) to cv2.resize. Use img.shape[1] for width, img.shape[0] for height.</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     MODULE 3 — DETECTION & TRACKING
+═══════════════════════════════════════════ -->
+<section class="mod" id="detection">
+<div class="wrap">
+  <div class="mod-head">
+    <div class="mod-ey">Module 03 — Detection and Tracking</div>
+    <div class="mod-title">Object Detection, Bounding Boxes and Multi-Frame Tracking</div>
+  </div>
+  <div class="topics">
+
+    <!-- T6 Detection vs Classification -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">06</span>
+        <div class="t-text">
+          <div class="t-title">Detection vs Classification and Bounding Boxes</div>
+          <div class="t-sub">What each task means, bounding box format and confidence scores</div>
+          <div class="t-tags"><span class="tag g">Detection</span><span class="tag b">Classification</span><span class="tag">Bounding Box</span><span class="tag">Confidence</span><span class="tag a">IoU</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">These two tasks are often confused. <strong>Classification</strong> answers "what is in this image?" with a single label. <strong>Detection</strong> answers "what is in this image AND where is it?" — returning both a label and a bounding box for every object found.</p>
+        <div class="g2 mt16">
+          <div class="card"><div class="card-title" style="color:var(--blue)">Image Classification</div><div class="card-body">Input: full image. Output: one class label (+ confidence). Example: "cat — 94%". Cannot locate the object or handle multiple objects. Used when the whole image depicts one thing.</div></div>
+          <div class="card"><div class="card-title" style="color:var(--green)">Object Detection</div><div class="card-body">Input: full image. Output: list of (class, confidence, bounding box) for every detected object. Can handle many objects of many classes simultaneously. Used for most real-world robotics applications.</div></div>
+        </div>
+        <div class="fbox">
+          <div class="formula">Bounding box: (x<sub>center</sub>, y<sub>center</sub>, width, height) &nbsp;— YOLO format</div>
+          <div class="formula">IoU = Area of Overlap &divide; Area of Union &nbsp;&nbsp; (0 = no overlap, 1 = perfect)</div>
+          <div class="fnote">IoU (Intersection over Union) measures how well a predicted box matches the ground-truth box. Threshold typically 0.5 for a detection to count as correct.</div>
+        </div>
+
+        <div class="sec">Live Calculator — Bounding Box IoU</div>
+        <div class="calc a">
+          <div class="calc-title">IoU Calculator</div>
+          <div class="calc-sub">Enter two bounding boxes (x, y, width, height) in pixel coordinates and compute Intersection over Union</div>
+          <div class="flds">
+            <div class="fld"><label>Box A — x, y, w, h (px)</label><input type="text" id="ba" value="100,100,200,150" placeholder="x,y,w,h"></div>
+            <div class="fld"><label>Box B — x, y, w, h (px)</label><input type="text" id="bb" value="150,120,200,150" placeholder="x,y,w,h"></div>
+          </div>
+          <button class="cbtn a" onclick="calcIoU()">Compute IoU</button>
+          <div class="cout" id="iouout">
+            <div class="orow"><span class="ok_">Intersection area</span><span class="ov w" id="iou-int">—</span></div>
+            <div class="orow"><span class="ok_">Union area</span><span class="ov w" id="iou-uni">—</span></div>
+            <div class="orow"><span class="ok_">IoU score</span><span class="ov" id="iou-val">—</span></div>
+            <div class="orow"><span class="ok_">Detection valid? (threshold 0.5)</span><span class="ov" id="iou-ok">—</span></div>
+            <div class="onote a" id="iou-nt"></div>
+          </div>
+        </div>
+
+        <div class="sec">Code — YOLOv8 Object Detection</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Python — YOLOv8</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="kw">from</span> ultralytics <span class="kw">import</span> <span class="tp">YOLO</span>
+<span class="kw">import</span> cv2
+
+model = <span class="tp">YOLO</span>(<span class="st">"yolov8n.pt"</span>)  <span class="cm"># nano model — fastest</span>
+
+results = model.<span class="fn">predict</span>(source=<span class="st">"video.mp4"</span>, conf=<span class="nm">0.5</span>, save=<span class="tp">True</span>)
+
+<span class="kw">for</span> result <span class="kw">in</span> results:
+    boxes = result.boxes      <span class="cm"># all detected bounding boxes</span>
+    <span class="kw">for</span> box <span class="kw">in</span> boxes:
+        x1, y1, x2, y2 = box.xyxy[<span class="nm">0</span>]   <span class="cm"># corner format</span>
+        conf  = box.conf[<span class="nm">0</span>]              <span class="cm"># confidence score</span>
+        cls   = <span class="fn">int</span>(box.cls[<span class="nm">0</span>])          <span class="cm"># class index</span>
+        label = model.names[cls]          <span class="cm"># class name string</span>
+        <span class="fn">print</span>(<span class="st">f"{label}: {conf:.2f} at [{x1:.0f},{y1:.0f},{x2:.0f},{y2:.0f}]"</span>)</pre>
+        </div>
+
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">Detection Concept Tests</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">IoU of two identical boxes</div><div class="tcd">Intersection = Union = area of the box</div><div class="tcr">IoU = 1.0 — perfect match</div></div></div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">IoU of two non-overlapping boxes</div><div class="tcd">Intersection area = 0</div><div class="tcr">IoU = 0.0 / Union = 0.0 — the boxes share no pixels</div></div></div>
+          <div class="tc"><div class="tcs w">W</div><div class="tcb"><div class="tcn">Confidence threshold too low (0.1)</div><div class="tcd">Many low-quality detections with high false positive rate</div><div class="tcr">Use 0.4–0.6 for most applications. Tune on validation set, not test set.</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- T7 Object Tracking -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">07</span>
+        <div class="t-text">
+          <div class="t-title">Object Tracking across Video Frames</div>
+          <div class="t-sub">Maintaining object identity across frames with DeepSORT and OpenCV trackers</div>
+          <div class="t-tags"><span class="tag g">Tracking</span><span class="tag g">DeepSORT</span><span class="tag b">OpenCV</span><span class="tag">Object ID</span><span class="tag a">Kalman Filter</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">Detection runs on a single frame. <strong>Tracking</strong> links detections across frames so that the same object keeps the same ID as it moves through a video. Without tracking, a person detected in frame 1 and frame 2 would be two different detections with no connection between them.</p>
+        <div class="sec">Detection vs Tracking Pipeline</div>
+        <div class="pipeline">
+          <div class="pipe-step g">Frame N<div class="pipe-sub">video frame</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step b">YOLOv8<div class="pipe-sub">detect objects</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step a">DeepSORT<div class="pipe-sub">assign / update IDs</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step p">Output<div class="pipe-sub">ID + box per object</div></div>
+        </div>
+        <div class="g3 mt16">
+          <div class="card"><div class="card-title" style="color:var(--green)">Kalman Filter</div><div class="card-body">Predicts where each tracked object will be in the next frame based on its velocity. This prediction is matched against new detections. Handles short occlusions where the object briefly disappears.</div></div>
+          <div class="card"><div class="card-title" style="color:var(--blue)">Hungarian Algorithm</div><div class="card-body">Solves the assignment problem: which detection in frame N+1 corresponds to which track from frame N? Minimises total cost (usually based on IoU between predicted and detected boxes).</div></div>
+          <div class="card"><div class="card-title" style="color:var(--amber)">Re-ID Features</div><div class="card-body">DeepSORT adds a deep appearance descriptor (like a face/body embedding) per detection. This allows re-identification after long occlusion when Kalman prediction alone would fail.</div></div>
+        </div>
+        <div class="sec">Code — YOLOv8 + Built-in Tracker</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Python — YOLOv8 Tracking</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="kw">from</span> ultralytics <span class="kw">import</span> <span class="tp">YOLO</span>
+<span class="kw">import</span> cv2
+
+model = <span class="tp">YOLO</span>(<span class="st">"yolov8n.pt"</span>)
+cap   = cv2.<span class="tp">VideoCapture</span>(<span class="st">"video.mp4"</span>)
+
+<span class="kw">while</span> cap.<span class="fn">isOpened</span>():
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret:
+        <span class="kw">break</span>
+
+    <span class="cm"># .track() runs detection + tracking on every frame</span>
+    results = model.<span class="fn">track</span>(frame, persist=<span class="tp">True</span>, tracker=<span class="st">"bytetrack.yaml"</span>)
+
+    <span class="kw">if</span> results[<span class="nm">0</span>].boxes.id <span class="kw">is not None</span>:
+        ids    = results[<span class="nm">0</span>].boxes.id.<span class="fn">int</span>().<span class="fn">tolist</span>()
+        boxes  = results[<span class="nm">0</span>].boxes.xyxy
+        <span class="kw">for</span> obj_id, box <span class="kw">in</span> <span class="fn">zip</span>(ids, boxes):
+            x1,y1,x2,y2 = <span class="fn">map</span>(<span class="fn">int</span>, box)
+            cv2.<span class="fn">rectangle</span>(frame, (x1,y1), (x2,y2), (<span class="nm">0</span>,<span class="nm">255</span>,<span class="nm">0</span>), <span class="nm">2</span>)
+            cv2.<span class="fn">putText</span>(frame, <span class="st">f"ID {obj_id}"</span>, (x1,y1-<span class="nm">10</span>),
+                       cv2.FONT_HERSHEY_SIMPLEX, <span class="nm">0.6</span>, (<span class="nm">0</span>,<span class="nm">255</span>,<span class="nm">0</span>), <span class="nm">2</span>)
+
+cap.<span class="fn">release</span>()</pre>
+        </div>
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">Tracking Concept Tests</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">persist=True in model.track() — why is it necessary?</div><div class="tcd">Without persist=True, tracker state resets every frame call</div><div class="tcr">persist=True keeps the Kalman filter state between calls, enabling ID continuity across frames</div></div></div>
+          <div class="tc"><div class="tcs w">W</div><div class="tcb"><div class="tcn">Object disappears behind another object for 10 frames</div><div class="tcd">Tracker has no detection to match for 10 consecutive frames</div><div class="tcr">DeepSORT keeps the track alive for max_age frames (default 30). Re-ID features help reassign the same ID when it reappears.</div></div></div>
+          <div class="tc"><div class="tcs f">F</div><div class="tcb"><div class="tcn">Two people cross paths — ID switch</div><div class="tcd">Person A gets ID 1, Person B gets ID 2. After crossing, they swap.</div><div class="tcr">ID switches are a known failure mode. DeepSORT's appearance embedding reduces this. For evaluation use MOTA and IDF1 metrics.</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     MODULE 4 — MACHINE LEARNING
+═══════════════════════════════════════════ -->
+<section class="mod" id="ml">
+<div class="wrap">
+  <div class="mod-head">
+    <div class="mod-ey">Module 04 — Machine Learning</div>
+    <div class="mod-title">CNNs, Training, Evaluation and the ML Workflow</div>
+  </div>
+  <div class="topics">
+
+    <!-- T8 ML Fundamentals -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">08</span>
+        <div class="t-text">
+          <div class="t-title">ML Fundamentals — Training, Testing and Evaluation</div>
+          <div class="t-sub">Datasets, splits, accuracy, overfitting vs underfitting</div>
+          <div class="t-tags"><span class="tag g">Machine Learning</span><span class="tag b">Datasets</span><span class="tag a">Overfitting</span><span class="tag">Train/Test Split</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">Machine learning is the process of finding patterns in data automatically, rather than hand-coding rules. A model <em>learns</em> from a training dataset and then <em>generalises</em> to new examples it has never seen. How well it does this is measured on a held-out test set.</p>
+        <div class="sec">Dataset Splits</div>
+        <div class="fbox">
+          <div class="formula">Training set: 70–80% &nbsp;&nbsp; Validation set: 10–15% &nbsp;&nbsp; Test set: 10–15%</div>
+          <div class="fnote">Training: model learns from these. Validation: tune hyperparameters here. Test: evaluate final model once only.</div>
+        </div>
+        <div class="g2 mt16">
+          <div class="card"><div class="card-title" style="color:var(--amber)">Overfitting</div><div class="card-body">Model memorises the training data perfectly but performs poorly on new data. Training accuracy is high; validation accuracy is much lower. Fix: more data, data augmentation, dropout, early stopping.</div></div>
+          <div class="card"><div class="card-title" style="color:var(--blue)">Underfitting</div><div class="card-body">Model has not learned enough from the training data. Both training and validation accuracy are low. Fix: more training epochs, larger model, reduced regularisation, better features.</div></div>
+        </div>
+        <div class="sec">Live Calculator — Train/Validation Split</div>
+        <div class="calc p">
+          <div class="calc-title">Dataset Split Calculator</div>
+          <div class="calc-sub">Enter your total dataset size and desired splits — see exact sample counts</div>
+          <div class="flds c3">
+            <div class="fld"><label>Total images</label><input type="number" id="ds" value="1000" step="50" oninput="calcSplit()"></div>
+            <div class="fld"><label>Train % </label><div class="slrow"><input type="range" id="dtr" min="50" max="85" step="5" value="70" oninput="document.getElementById('dtrv').textContent=this.value+'%';calcSplit()"><span class="slv" id="dtrv">70%</span></div></div>
+            <div class="fld"><label>Val %</label><div class="slrow"><input type="range" id="dvl" min="5" max="25" step="5" value="15" oninput="document.getElementById('dvlv').textContent=this.value+'%';calcSplit()"><span class="slv" id="dvlv">15%</span></div></div>
+          </div>
+          <div class="cout show" id="splitout">
+            <div class="orow"><span class="ok_">Training images</span><span class="ov p" id="sp-tr">—</span></div>
+            <div class="orow"><span class="ok_">Validation images</span><span class="ov b" id="sp-vl">—</span></div>
+            <div class="orow"><span class="ok_">Test images</span><span class="ov a" id="sp-te">—</span></div>
+            <div class="orow"><span class="ok_">Minimum recommended total (per class)</span><span class="ov w" id="sp-min">—</span></div>
+            <div class="onote a" id="sp-nt"></div>
+          </div>
+        </div>
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">ML Fundamentals Tests</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Model: train acc=99%, val acc=62% — diagnosis?</div><div class="tcd">Large gap between training and validation accuracy</div><div class="tcr">Overfitting. The model memorised training examples but cannot generalise.</div></div></div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Model: train acc=58%, val acc=56% — diagnosis?</div><div class="tcd">Both accuracies are low and close together</div><div class="tcr">Underfitting. The model has not learned the task. Train longer or use a larger architecture.</div></div></div>
+          <div class="tc"><div class="tcs w">W</div><div class="tcb"><div class="tcn">Evaluating model performance on the validation set during tuning</div><div class="tcd">Hyperparameters tuned 50 times based on val acc — then final reported on same val set</div><div class="tcr">The test set must never be touched during development. Validation "leaks" into hyperparameter choices. Keep a truly unseen test set.</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- T9 CNNs -->
+    <div class="topic">
+      <div class="t-head" onclick="T(this)">
+        <span class="t-num">09</span>
+        <div class="t-text">
+          <div class="t-title">Convolutional Neural Networks (CNNs)</div>
+          <div class="t-sub">How CNNs learn features from images, layers, filters and the classification workflow</div>
+          <div class="t-tags"><span class="tag g">CNN</span><span class="tag b">TensorFlow</span><span class="tag p">PyTorch</span><span class="tag">Convolution</span><span class="tag">Pooling</span></div>
+        </div>
+        <span class="t-arr">&#x25BE;</span>
+      </div>
+      <div class="t-body"><div class="t-inner">
+        <p class="prose">A CNN automatically learns <em>what features to look for in an image</em> — edges, textures, shapes, object parts — through training. This is in contrast to hand-crafted features. Early layers detect low-level features (edges). Deeper layers detect complex patterns (faces, wheels, logos).</p>
+        <div class="sec">CNN Architecture</div>
+        <div class="pipeline">
+          <div class="pipe-step g">Input Image<div class="pipe-sub">(H, W, 3)</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step">Conv + ReLU<div class="pipe-sub">extract features</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step b">Pooling<div class="pipe-sub">reduce size</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step">Flatten<div class="pipe-sub">1D vector</div></div>
+          <div class="pipe-arrow">&#x25B6;</div>
+          <div class="pipe-step p">Dense + Softmax<div class="pipe-sub">class scores</div></div>
+        </div>
+        <div class="g3 mt16">
+          <div class="card"><div class="card-title" style="color:var(--green)">Convolutional Layer</div><div class="card-body">A small filter (kernel, e.g. 3&times;3) slides across the image, computing a dot product at every position. This produces a feature map. Many filters run in parallel, each detecting a different pattern.</div></div>
+          <div class="card"><div class="card-title" style="color:var(--blue)">Pooling Layer</div><div class="card-body">Reduces the spatial size (max pooling takes the maximum value in each region). This reduces computation, makes the network translation-invariant, and prevents overfitting by reducing parameters.</div></div>
+          <div class="card"><div class="card-title" style="color:var(--purple)">Dense + Softmax</div><div class="card-body">After the convolutional layers, the feature map is flattened to a 1D vector and fed through fully-connected layers. The final softmax converts raw scores to a probability distribution over classes.</div></div>
+        </div>
+        <div class="fbox">
+          <div class="formula">Output size after Conv: floor((W &minus; K + 2P) / S) + 1</div>
+          <div class="fnote">W = input size, K = kernel size, P = padding, S = stride &nbsp;&middot;&nbsp; Most standard: K=3, P=1, S=1 &rarr; output size = input size</div>
+        </div>
+
+        <div class="sec">Live Calculator — Conv Layer Output Size</div>
+        <div class="calc b">
+          <div class="calc-title">Convolution Output Size Calculator</div>
+          <div class="calc-sub">Compute the feature map size after a convolutional layer</div>
+          <div class="flds c3">
+            <div class="fld"><label>Input size (W = H)</label><input type="number" id="ci" value="224" step="8" oninput="calcConv()"></div>
+            <div class="fld"><label>Kernel size (K)</label>
+              <select id="ck" onchange="calcConv()">
+                <option value="1">1&times;1</option>
+                <option value="3" selected>3&times;3</option>
+                <option value="5">5&times;5</option>
+                <option value="7">7&times;7</option>
+              </select>
+            </div>
+            <div class="fld"><label>Filters (channels out)</label><input type="number" id="cf" value="64" step="16" oninput="calcConv()"></div>
+          </div>
+          <div class="flds mt8">
+            <div class="fld"><label>Padding (P)</label><input type="number" id="cp" value="1" step="1" min="0" oninput="calcConv()"></div>
+            <div class="fld"><label>Stride (S)</label>
+              <select id="cs" onchange="calcConv()">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+          </div>
+          <div class="cout show" id="cout">
+            <div class="orow"><span class="ok_">Output spatial size</span><span class="ov b" id="co-sz">—</span></div>
+            <div class="orow"><span class="ok_">Output tensor shape</span><span class="ov" id="co-sh">—</span></div>
+            <div class="orow"><span class="ok_">Trainable parameters in this layer</span><span class="ov a" id="co-pr">—</span></div>
+            <div class="orow"><span class="ok_">Spatial size preserved?</span><span class="ov" id="co-sp">—</span></div>
+          </div>
+        </div>
+
+        <div class="sec">Code — CNN Image Classification (TensorFlow/Keras)</div>
+        <div class="cbox">
+          <div class="cbar"><span class="clang">Python — TensorFlow / Keras</span><button class="cpbtn" onclick="CC(this)">Copy</button></div>
+          <pre><span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> layers, models
+
+<span class="cm"># Build a simple CNN for image classification</span>
+model = models.<span class="fn">Sequential</span>([
+    layers.<span class="fn">Conv2D</span>(<span class="nm">32</span>, (<span class="nm">3</span>,<span class="nm">3</span>), activation=<span class="st">'relu'</span>, input_shape=(<span class="nm">224</span>,<span class="nm">224</span>,<span class="nm">3</span>)),
+    layers.<span class="fn">MaxPooling2D</span>((<span class="nm">2</span>,<span class="nm">2</span>)),
+    layers.<span class="fn">Conv2D</span>(<span class="nm">64</span>, (<span class="nm">3</span>,<span class="nm">3</span>), activation=<span class="st">'relu'</span>),
+    layers.<span class="fn">MaxPooling2D</span>((<span class="nm">2</span>,<span class="nm">2</span>)),
+    layers.<span class="fn">Flatten</span>(),
+    layers.<span class="fn">Dense</span>(<span class="nm">128</span>, activation=<span class="st">'relu'</span>),
+    layers.<span class="fn">Dropout</span>(<span class="nm">0.4</span>),             <span class="cm"># reduces overfitting</span>
+    layers.<span class="fn">Dense</span>(<span class="nm">10</span>, activation=<span class="st">'softmax'</span>)  <span class="cm"># 10 classes</span>
+])
+
+model.<span class="fn">compile</span>(optimizer=<span class="st">'adam'</span>,
+              loss=<span class="st">'sparse_categorical_crossentropy'</span>,
+              metrics=[<span class="st">'accuracy'</span>])
+
+model.<span class="fn">summary</span>()
+
+<span class="cm"># Train</span>
+history = model.<span class="fn">fit</span>(train_ds, epochs=<span class="nm">20</span>,
+                    validation_data=val_ds,
+                    callbacks=[tf.keras.callbacks.<span class="fn">EarlyStopping</span>(patience=<span class="nm">5</span>)])</pre>
+        </div>
+
+        <div class="sec">Test Cases</div>
+        <div class="tests">
+          <div class="tests-hd">CNN Architecture Tests</div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Conv output size: input=224, K=3, P=1, S=1</div><div class="tcd">floor((224 - 3 + 2*1) / 1) + 1</div><div class="tcr">Result: 224 — same size. Padding=1 with kernel=3 preserves spatial dimensions.</div></div></div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">After MaxPooling(2,2) on 224&times;224 feature map</div><div class="tcd">Each dimension halved</div><div class="tcr">Result: 112&times;112. Pooling reduces spatial size, increases effective receptive field.</div></div></div>
+          <div class="tc"><div class="tcs p">P</div><div class="tcb"><div class="tcn">Trainable params in Conv2D(32, 3x3) on 3-channel input</div><div class="tcd">params = (K*K*C_in + 1) * C_out = (3*3*3 + 1) * 32</div><div class="tcr">Result: 896 parameters. The +1 accounts for bias per filter.</div></div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- RESOURCES -->
+<section class="mod" id="resources">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-ey">Further Learning</div>
+      <div class="mod-title">Videos &amp; Articles</div>
+    </div>
+
+    <div class="sec">YouTube — Watch &amp; Learn</div>
+    <div class="res-grid">
+
+      <a class="vid-card" href="https://www.youtube.com/watch?v=WgX8e_5RI0Y" target="_blank" rel="noopener">
+        <div class="vid-thumb">
+          <img src="https://img.youtube.com/vi/WgX8e_5RI0Y/hqdefault.jpg" alt="OpenCV Python Full Course">
+          <div class="vid-play"></div>
+          <div class="vid-yt-badge">YouTube</div>
+        </div>
+        <div class="vid-meta">
+          <div class="vid-title">OpenCV Python Tutorial — Full Course for Beginners</div>
+          <div class="vid-ch">freeCodeCamp</div>
+          <div class="vid-desc">Comprehensive course covering image loading, colour spaces, thresholding, contour detection, and real-time webcam processing.</div>
+        </div>
+      </a>
+
+      <a class="vid-card" href="https://www.youtube.com/watch?v=yqkISICHH-U" target="_blank" rel="noopener">
+        <div class="vid-thumb">
+          <img src="https://img.youtube.com/vi/yqkISICHH-U/hqdefault.jpg" alt="YOLO Object Detection OpenCV">
+          <div class="vid-play"></div>
+          <div class="vid-yt-badge">YouTube</div>
+        </div>
+        <div class="vid-meta">
+          <div class="vid-title">YOLO Object Detection with OpenCV &amp; Python</div>
+          <div class="vid-ch">Aladdin Persson</div>
+          <div class="vid-desc">Practical YOLOv5 implementation — model loading, inference on images and video, bounding box drawing, and confidence threshold tuning in Python.</div>
+        </div>
+      </a>
+
+      <a class="vid-card" href="https://www.youtube.com/watch?v=V9ZfHCedXZo" target="_blank" rel="noopener">
+        <div class="vid-thumb">
+          <img src="https://img.youtube.com/vi/V9ZfHCedXZo/hqdefault.jpg" alt="Convolutional Neural Networks Explained">
+          <div class="vid-play"></div>
+          <div class="vid-yt-badge">YouTube</div>
+        </div>
+        <div class="vid-meta">
+          <div class="vid-title">Convolutional Neural Networks — Visual Explanation</div>
+          <div class="vid-ch">3Blue1Brown</div>
+          <div class="vid-desc">Animated walkthrough of how CNNs learn spatial features — filters, pooling, and activation maps explained intuitively without heavy maths.</div>
+        </div>
+      </a>
+
+      <a class="vid-card" href="https://www.youtube.com/watch?v=Z78zbnLlPUA" target="_blank" rel="noopener">
+        <div class="vid-thumb">
+          <img src="https://img.youtube.com/vi/Z78zbnLlPUA/hqdefault.jpg" alt="NumPy for Machine Learning">
+          <div class="vid-play"></div>
+          <div class="vid-yt-badge">YouTube</div>
+        </div>
+        <div class="vid-meta">
+          <div class="vid-title">NumPy for Machine Learning — Arrays, Shapes &amp; Operations</div>
+          <div class="vid-ch">Sentdex</div>
+          <div class="vid-desc">Array creation, broadcasting, indexing, and reshaping — the exact NumPy operations used for image arrays and dataset manipulation in the Software Domain.</div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="sec" style="margin-top:24px">Reading — Authoritative Articles</div>
+    <div class="res-grid">
+
+      <a class="art-card" href="https://pyimagesearch.com/2021/01/20/opencv-getting-started-with-images/" target="_blank" rel="noopener">
+        <div class="art-src">PyImageSearch — Adrian Rosebrock</div>
+        <div class="art-title">Getting Started with Images in OpenCV &amp; Python</div>
+        <div class="art-desc">The definitive beginner guide to OpenCV — loading, displaying, and saving images; BGR vs RGB; pixel access; and NumPy array shapes explained with clear examples.</div>
+        <div class="art-arrow">Read article →</div>
+      </a>
+
+      <a class="art-card" href="https://learnopencv.com/object-detection-using-yolov5-and-opencv-dnn-in-c-and-python/" target="_blank" rel="noopener">
+        <div class="art-src">LearnOpenCV</div>
+        <div class="art-title">Object Detection with YOLOv5 and OpenCV DNN</div>
+        <div class="art-desc">Running YOLOv5 inference using OpenCV's built-in DNN module — covers model export, preprocessing, post-processing, NMS, and drawing results in Python and C++.</div>
+        <div class="art-arrow">Read article →</div>
+      </a>
+
+      <a class="art-card" href="https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html" target="_blank" rel="noopener">
+        <div class="art-src">OpenCV Official Documentation</div>
+        <div class="art-title">OpenCV-Python Tutorials — Official Reference</div>
+        <div class="art-desc">The complete official Python tutorial tree — Core Operations, Image Processing, Feature Detection, Video Analysis, and Object Detection. The authoritative reference for all OpenCV functions.</div>
+        <div class="art-arrow">Read article →</div>
+      </a>
+
+      <a class="art-card" href="https://www.geeksforgeeks.org/image-processing-in-python-scaling-rotating-shifting-and-edge-detection/" target="_blank" rel="noopener">
+        <div class="art-src">GeeksforGeeks</div>
+        <div class="art-title">Image Processing in Python — Scaling, Rotating &amp; Edge Detection</div>
+        <div class="art-desc">Beginner-friendly walkthrough of affine transforms, Canny edge detection, and morphological operations using OpenCV — with runnable code snippets for each technique.</div>
+        <div class="art-arrow">Read article →</div>
+      </a>
+
+      <a class="art-card" href="https://cs231n.github.io/convolutional-networks/" target="_blank" rel="noopener">
+        <div class="art-src">Stanford CS231n</div>
+        <div class="art-title">Convolutional Neural Networks for Visual Recognition</div>
+        <div class="art-desc">Stanford's famous CS231n course notes on CNNs — architecture design, receptive fields, parameter counting, and output size formulas. Essential theoretical grounding for the ML module.</div>
+        <div class="art-arrow">Read article →</div>
+      </a>
+
+      <a class="art-card" href="https://pyimagesearch.com/2018/05/14/a-gentle-guide-to-deep-learning-object-detection/" target="_blank" rel="noopener">
+        <div class="art-src">PyImageSearch</div>
+        <div class="art-title">A Gentle Guide to Deep Learning Object Detection</div>
+        <div class="art-desc">Covers the full detection pipeline — region proposals, anchor boxes, IoU, NMS, mAP, and how YOLO unifies them into a single-pass model. Perfect companion to the Detection &amp; Tracking module.</div>
+        <div class="art-arrow">Read article →</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">ROBO<span>YAAN</span></div>
+  <div class="flinks">
+    <a href="#python">Python Basics</a>
+    <a href="#cv">Computer Vision</a>
+    <a href="#detection">Detection &amp; Tracking</a>
+    <a href="#ml">Machine Learning</a>
+    <a href="#resources">Resources</a>
+  </div>
+  <div class="fcp">Roboyaan 2025 &middot; Software Domain</div>
+</footer>
+
+<script>
+/* ── ACCORDION ── */
+function T(h){ h.closest('.topic').classList.toggle('open'); }
+
+/* ── NAV ── */
+const burg=document.getElementById('burg'),mob=document.getElementById('mob');
+burg.addEventListener('click',()=>{burg.classList.toggle('open');mob.classList.toggle('open')});
+mob.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burg.classList.remove('open');mob.classList.remove('open')}));
+const sIds=['python','cv','detection','ml','resources'],nTabs=document.querySelectorAll('.nav-tab');
+window.addEventListener('scroll',()=>{
+  let cur=sIds[0];
+  sIds.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id});
+  nTabs.forEach(t=>t.classList.toggle('on',t.getAttribute('href')==='#'+cur));
+},{passive:true});
+
+/* ── COPY ── */
+function CC(btn){navigator.clipboard.writeText(btn.closest('.cbox').querySelector('pre').innerText).then(()=>{btn.textContent='Copied';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok')},2000)})}
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}}),{threshold:.06});
+document.querySelectorAll('.topic,.mod-head').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(18px)';el.style.transition='opacity .4s ease,transform .4s ease';obs.observe(el)});
+
+/* ── PYTHON TYPE QUIZ ── */
+const pyQuestions=[
+  {expr:'x = [1, 2, 3]',       correct:'list',  opts:['int','list','tuple','dict']},
+  {expr:'y = {"a": 1}',        correct:'dict',  opts:['list','set','dict','tuple']},
+  {expr:'z = (1, 2, 3)',       correct:'tuple', opts:['list','tuple','array','set']},
+  {expr:'n = 3.14',            correct:'float', opts:['int','float','str','complex']},
+];
+function buildPyQuiz(){
+  const container=document.getElementById('quiz-py');
+  pyQuestions.forEach((q,qi)=>{
+    const div=document.createElement('div');
+    div.innerHTML=`<div style="font-family:var(--fm);font-size:12px;color:var(--t2);margin-bottom:6px"><span style="color:var(--green)">&gt;&gt;&gt;</span> ${q.expr}</div>`;
+    const opts=document.createElement('div');
+    opts.className='quiz-options';
+    q.opts.forEach(opt=>{
+      const btn=document.createElement('button');
+      btn.className='quiz-opt';
+      btn.innerHTML=`<span class="quiz-letter">${opt[0].toUpperCase()}</span>${opt}`;
+      btn.onclick=()=>{
+        if(div.dataset.done)return;
+        div.dataset.done='1';
+        const res=div.querySelector('.quiz-result');
+        if(opt===q.correct){btn.classList.add('correct');res.className='quiz-result ok show';res.textContent='Correct. '+opt+' is the right data type.'}
+        else{btn.classList.add('wrong');res.className='quiz-result no show';res.textContent='Not quite. The answer is '+q.correct+'.';opts.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent.includes(q.correct))b.classList.add('revealed','correct')});}
+      };
+      opts.appendChild(btn);
+    });
+    const res=document.createElement('div');res.className='quiz-result';
+    div.appendChild(opts);div.appendChild(res);
+    container.appendChild(div);
+  });
+}
+buildPyQuiz();
+
+/* ── IMAGE SHAPE CALCULATOR ── */
+function calcShape(){
+  const w=+document.getElementById('sw').value,h=+document.getElementById('sh').value,c=+document.getElementById('sc').value;
+  const px=w*h,mem=px*c,memf=px*c*4;
+  document.getElementById('sh-shape').textContent=`(${h}, ${w}, ${c})`;
+  document.getElementById('sh-pix').textContent=(px/1e6).toFixed(2)+' MP';
+  document.getElementById('sh-mem').textContent=fmt(mem);
+  document.getElementById('sh-f32').textContent=fmt(memf)+' (×4 for float32)';
+  document.getElementById('sh-mdl').textContent=fmt(224*224*3*4)+' — compare to your '+fmt(memf);
+}
+function fmt(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(2)+' MB';}
+calcShape();
+
+/* ── RESIZE CALCULATOR ── */
+function calcResize(){
+  const w=+document.getElementById('rw').value,h=+document.getElementById('rh').value,t=+document.getElementById('rt').value;
+  const memB=w*h*3,memA=t*t*3,red=((1-memA/memB)*100).toFixed(1),scale=(t/Math.max(w,h)).toFixed(3);
+  document.getElementById('r-orig').textContent=`${w}×${h}`;
+  document.getElementById('r-scale').textContent=scale+' × ('+Math.min(w,h)+'px short edge)';
+  document.getElementById('r-memb').textContent=fmt(memB);
+  document.getElementById('r-mema').textContent=fmt(memA);
+  const re=document.getElementById('r-red');re.textContent=memA<memB?red+'% smaller':Math.abs(+red)+'% larger';re.className='ov '+(memA<memB?'':'r');
+}
+calcResize();
+
+/* ── IoU CALCULATOR ── */
+function calcIoU(){
+  const pa=document.getElementById('ba').value.split(',').map(Number);
+  const pb=document.getElementById('bb').value.split(',').map(Number);
+  if(pa.length<4||pb.length<4){alert('Enter 4 values: x,y,w,h');return;}
+  const ax1=pa[0],ay1=pa[1],ax2=pa[0]+pa[2],ay2=pa[1]+pa[3];
+  const bx1=pb[0],by1=pb[1],bx2=pb[0]+pb[2],by2=pb[1]+pb[3];
+  const ix=Math.max(0,Math.min(ax2,bx2)-Math.max(ax1,bx1));
+  const iy=Math.max(0,Math.min(ay2,by2)-Math.max(ay1,by1));
+  const inter=ix*iy,areaA=pa[2]*pa[3],areaB=pb[2]*pb[3];
+  const union=areaA+areaB-inter,iou=union>0?(inter/union):0;
+  document.getElementById('iou-int').textContent=inter.toFixed(0)+' px²';
+  document.getElementById('iou-uni').textContent=union.toFixed(0)+' px²';
+  const iv=document.getElementById('iou-val');iv.textContent=iou.toFixed(3);iv.className='ov '+(iou>=0.5?'':'r');
+  const ik=document.getElementById('iou-ok');ik.textContent=iou>=0.5?'Yes (IoU ≥ 0.5)':'No (IoU < 0.5)';ik.className='ov '+(iou>=0.5?'g':'r');
+  document.getElementById('iou-nt').textContent=iou>=0.9?'Near-perfect overlap — excellent prediction.':iou>=0.5?'Good overlap — counts as a true positive at IoU 0.5 threshold.':iou>0?'Partial overlap but below threshold — counts as a missed detection.':'No overlap — boxes are completely separate.';
+  document.getElementById('iouout').classList.add('show');
+}
+
+/* ── DATASET SPLIT CALCULATOR ── */
+function calcSplit(){
+  const total=+document.getElementById('ds').value,tr=+document.getElementById('dtr').value,vl=+document.getElementById('dvl').value;
+  const te=100-tr-vl,trN=Math.round(total*tr/100),vlN=Math.round(total*vl/100),teN=total-trN-vlN;
+  document.getElementById('sp-tr').textContent=trN+' images ('+tr+'%)';
+  document.getElementById('sp-vl').textContent=vlN+' images ('+vl+'%)';
+  document.getElementById('sp-te').textContent=teN+' images ('+(te)+'%)';
+  document.getElementById('sp-min').textContent='~100–200 per class minimum for CV tasks';
+  const note=te<5?'Warning: test set is very small. Results may be unreliable.':trN<200?'Training set is small. Consider data augmentation.':'Split looks reasonable for a moderate dataset.';
+  const nt=document.getElementById('sp-nt');nt.textContent=note;nt.className='onote '+(te<5||trN<200?'a':'');
+}
+calcSplit();
+
+/* ── CONV LAYER CALCULATOR ── */
+function calcConv(){
+  const W=+document.getElementById('ci').value,K=+document.getElementById('ck').value;
+  const F=+document.getElementById('cf').value,P=+document.getElementById('cp').value,S=+document.getElementById('cs').value;
+  const out=Math.floor((W-K+2*P)/S)+1;
+  const params=(K*K*3+1)*F;
+  const preserved=out===W;
+  document.getElementById('co-sz').textContent=out+'×'+out;
+  document.getElementById('co-sh').textContent=`(${out}, ${out}, ${F})`;
+  const pr=document.getElementById('co-pr');pr.textContent=params.toLocaleString()+' parameters';pr.className='ov a';
+  const sp=document.getElementById('co-sp');sp.textContent=preserved?'Yes — P='+P+', S='+S+', K='+K+' preserves size':'No — output is '+out+'×'+out+' vs input '+W+'×'+W;sp.className='ov '+(preserved?'':'r');
+}
+calcConv();
+
+/* ── PIXEL MATRIX ── */
+function buildMatrix(){
+  const type=document.getElementById('mt-type').value,size=+document.getElementById('mt-size').value;
+  const grid=document.getElementById('mt-grid'),px=Math.min(Math.floor(400/size),28);
+  grid.innerHTML='';
+  const g=document.createElement('div');
+  g.className='matrix-grid';
+  g.style.gridTemplateColumns=`repeat(${size},${px}px)`;
+  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
+    const cell=document.createElement('div');
+    cell.className='matrix-cell';
+    cell.style.width=cell.style.height=px+'px';
+    let bg,lbl;
+    if(type==='gradient'){const v=Math.round((c/size)*255);bg=`rgb(${v},${v},${v})`;lbl=v;}
+    else if(type==='checkerboard'){const v=((r+c)%2===0)?255:0;bg=`rgb(${v},${v},${v})`;lbl=v;}
+    else{const R=r<size/2?255:0,G=c<size/2?255:0,B=(r<size/2&&c>=size/2)?255:0;bg=`rgb(${R},${G},${B})`;lbl=`(${R},${G},${B})`;}
+    cell.style.background=bg;
+    cell.style.fontSize=px>20?'8px':'0';
+    const bright=type==='rgb_blocks'?128:parseInt(lbl);
+    cell.style.color=bright>128?'rgba(0,0,0,0.4)':'rgba(255,255,255,0.4)';
+    cell.textContent=px>20?lbl:'';
+    cell.addEventListener('mouseenter',()=>{document.getElementById('mt-hover').textContent=`Row ${r}, Col ${c} → value: ${lbl}`;});
+    g.appendChild(cell);
+  }
+  grid.appendChild(g);
+}
+buildMatrix();
+</script>
+</body>
+</html>
